@@ -1,0 +1,28 @@
+:root {
+  color-scheme: light dark;
+  font: 13px -apple-system, system-ui, sans-serif;
+  --muted: #6b7280;
+  --good: #1a7f37;
+  --bad: #c0392b;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --muted: #9ca3af; --good: #4cc38a; --bad: #f1796b; }
+}
+body { margin: 0; padding: 16px; }
+main { max-width: 520px; }
+.popup main { width: 260px; }
+h1 { font-size: 16px; margin: 0 0 8px; }
+h2 { font-size: 13px; margin: 20px 0 6px; }
+label { display: block; margin: 10px 0 4px; }
+input[type="text"], input[type="password"], input[type="number"], textarea {
+  width: 100%; box-sizing: border-box; padding: 6px 8px; font: inherit;
+}
+textarea { resize: vertical; }
+button { font: inherit; padding: 5px 12px; }
+.row { display: flex; gap: 12px; align-items: center; margin-top: 12px; }
+.switch { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+.muted { color: var(--muted); }
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+a { color: inherit; }
+.readonly { margin: 0 0 6px; padding: 6px 8px; border: 1px solid color-mix(in srgb, currentColor 15%, transparent); border-radius: 4px; word-break: break-word; }

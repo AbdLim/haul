@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Haul options</title>
+    <link rel="stylesheet" href="page.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Haul</h1>
+      <p class="muted">
+        Haul takes big downloads from this browser and runs them in the Haul
+        app on this Mac. Nothing leaves your computer.
+      </p>
+
+      <section>
+        <h2>Connection</h2>
+        <label for="token">Pairing token</label>
+        <input id="token" type="password" autocomplete="off" spellcheck="false"
+               placeholder="Paste it from Haul’s Settings" />
+        <label for="port">Port</label>
+        <input id="port" type="number" min="1024" max="65535" />
+        <div class="row">
+          <button id="test" type="button">Test connection</button>
+          <span id="result" role="status" aria-live="polite"></span>
+        </div>
+      </section>
+
+      <section>
+        <h2>What Haul takes over</h2>
+        <p class="muted" id="note">
+          These come from Haul. Change them in Haul’s Settings, under File
+          types; this page follows within a minute.
+        </p>
+        <label>File types</label>
+        <p id="extensions" class="readonly"></p>
+        <label>Anything at least this big</label>
+        <p id="minSize" class="readonly"></p>
+        <label>Never take over from these sites</label>
+        <p id="excluded" class="readonly"></p>
+        <p id="synced" class="muted"></p>
+      </section>
+
+      <p id="saved" class="muted" aria-live="polite"></p>
+    </main>
+    <script src="common.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>
