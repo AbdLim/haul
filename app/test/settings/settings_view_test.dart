@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:haul/app/components/components.dart';
 import 'package:haul/app/cubits/shell_cubit.dart';
+import 'package:haul/app/version.dart';
 import 'package:haul/data/setting_keys.dart';
 import 'package:haul/features/downloads/download_row.dart';
 import 'package:haul/features/settings/settings_pane.dart';
@@ -99,7 +100,7 @@ void main() {
     final env = await boot(tester);
     await tester.runAsync(() => env.deps.settings.set(Keys.keepAwake, false));
     await open(tester, pane: SettingsPane.about);
-    expect(find.text('1.0.0'), findsOneWidget);
+    expect(find.text(appVersion), findsOneWidget);
     await tester.tap(find.text('Reset all'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:haul/app/components/components.dart';
 import 'package:haul/app/cubits/shell_cubit.dart';
 import 'package:haul/app/cubits/update_cubit.dart';
+import 'package:haul/app/version.dart';
 import 'package:haul/data/setting_keys.dart';
 import 'package:haul/features/settings/settings_pane.dart';
 import 'package:haul/features/updates/update_banner.dart';
@@ -14,14 +15,14 @@ import '../support/test_deps.dart';
 import '../support/widget_host.dart';
 
 const info = UpdateInfo(
-  version: '1.0.1',
+  version: '9.9.9',
   notes:
       '## Fixed\n- Pause works while connecting\n\n'
       '## What\'s Changed\n* Fix it by @someone in https://github.com/abdlim/haul/pull/7\n\n'
-      '**Full Changelog**: https://github.com/abdlim/haul/compare/v1.0.0...v1.0.1',
-  pageUrl: 'https://github.com/abdlim/haul/releases/tag/v1.0.1',
-  downloadUrl: 'https://github.com/abdlim/haul/releases/download/v1.0.1/Haul-1.0.1-unsigned.dmg',
-  fileName: 'Haul-1.0.1-unsigned.dmg',
+      '**Full Changelog**: https://github.com/abdlim/haul/compare/v1.0.0...v9.9.9',
+  pageUrl: 'https://github.com/abdlim/haul/releases/tag/v9.9.9',
+  downloadUrl: 'https://github.com/abdlim/haul/releases/download/v9.9.9/Haul-9.9.9-unsigned.dmg',
+  fileName: 'Haul-9.9.9-unsigned.dmg',
   size: 25000000,
 );
 
@@ -38,8 +39,8 @@ void main() {
     expect(find.byType(UpdateBanner), findsOneWidget);
     expect(find.textContaining('is available'), findsNothing);
     await found(tester, env);
-    expect(find.text('Haul 1.0.1 is available'), findsOneWidget);
-    expect(find.text('You have 1.0.0.'), findsOneWidget);
+    expect(find.text('Haul 9.9.9 is available'), findsOneWidget);
+    expect(find.text('You have $appVersion.'), findsOneWidget);
     await shutDown(tester, env);
   });
 
@@ -52,7 +53,7 @@ void main() {
       ),
     );
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Haul 1.0.1 is available'), findsNothing);
+    expect(find.text('Haul 9.9.9 is available'), findsNothing);
     await shutDown(tester, env);
   });
 
@@ -76,8 +77,8 @@ void main() {
     await tester.tap(find.text('Skip this version'));
     await tester.runAsync(() => realDelay());
     await tester.pumpAndSettle();
-    expect(find.text('Haul 1.0.1 is available'), findsNothing);
-    expect(env.deps.settings.get(Keys.skippedUpdate), '1.0.1');
+    expect(find.text('Haul 9.9.9 is available'), findsNothing);
+    expect(env.deps.settings.get(Keys.skippedUpdate), '9.9.9');
     await shutDown(tester, env);
   });
 
@@ -102,7 +103,7 @@ void main() {
         .single;
     expect(stored.source, 'update');
     expect(stored.snapshot.request.url.toString(), info.downloadUrl);
-    expect(stored.snapshot.request.fileName, 'Haul-1.0.1-unsigned.dmg');
+    expect(stored.snapshot.request.fileName, 'Haul-9.9.9-unsigned.dmg');
     expect(env.engine.commands.whereType<AddCommand>(), hasLength(1));
     await shutDown(tester, env);
   });
@@ -115,9 +116,9 @@ void main() {
       tester,
       env,
       const UpdateInfo(
-        version: '1.0.1',
+        version: '9.9.9',
         notes: '',
-        pageUrl: 'https://github.com/abdlim/haul/releases/tag/v1.0.1',
+        pageUrl: 'https://github.com/abdlim/haul/releases/tag/v9.9.9',
       ),
     );
     await tester.tap(find.text('Download'));
