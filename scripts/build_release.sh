@@ -28,7 +28,7 @@ if [ "${HAUL_SKIP_EXTENSION:-}" = "1" ]; then
   step "Extension: tests SKIPPED (HAUL_SKIP_EXTENSION=1)"
 elif command -v node >/dev/null 2>&1; then
   step "Extension: tests"
-  (cd "$root/extension" && node --test --test-concurrency=1 test)
+  (cd "$root/extension" && node --test --test-concurrency=1 test/*.test.js)
 else
   echo "Node is not installed, so the extension's tests cannot run." >&2
   echo "Install Node 20+, or set HAUL_SKIP_EXTENSION=1 to leave them out." >&2

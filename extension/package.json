@@ -5,7 +5,7 @@
   "description": "Haul browser extension. No dependencies; Node 20 or newer runs the checks.",
   "scripts": {
     "build": "./build.sh",
-    "test": "node --test --test-concurrency=1 test",
+    "test": "node --test --test-concurrency=1 test/*.test.js",
     "e2e": "node e2e/options.e2e.js && node e2e/intercept.e2e.js && node e2e/linkmenu.e2e.js && node e2e/config.e2e.js && node e2e/package.e2e.js"
   }
 }
