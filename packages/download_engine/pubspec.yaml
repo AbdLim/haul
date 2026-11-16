@@ -1,0 +1,14 @@
+name: download_engine
+description: Segmented HTTP download engine for Haul. Pure Dart, no Flutter.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  path: ^1.9.1
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
