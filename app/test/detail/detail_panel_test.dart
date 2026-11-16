@@ -339,6 +339,56 @@ void main() {
       await shutDown(tester, env);
     });
 
+    testWidgets(
+      'another download\'s progress does not distort the speeds shown',
+      (tester) async {
+        final env = await boot(tester);
+        await add(tester, env, snap('a', DownloadStatus.downloading));
+        await add(tester, env, snap('b', DownloadStatus.downloading));
+        await tester.tap(find.text('a.zip'));
+        await settle(tester);
+        await live(tester, env, 'a', segs(4));
+        await tester.runAsync(() => realDelay(250));
+
+        // b reports, and a reports a moment later: a's bytes grew by 50 each
+        // over about a quarter of a second, a few hundred B/s, not KB or MB.
+        env.engine.emit(
+          ProgressEvent(
+            id: 'b',
+            downloadedBytes: 0,
+            totalBytes: 800,
+            bytesPerSecond: 0,
+            segmentBytes: const [0],
+            segments: segs(1),
+          ),
+        );
+        env.engine.emit(
+          ProgressEvent(
+            id: 'a',
+            downloadedBytes: 200,
+            totalBytes: 800,
+            bytesPerSecond: 0,
+            segmentBytes: const [50, 50, 50, 50],
+            segments: segs(4, downloaded: 50),
+          ),
+        );
+        await tester.runAsync(() => realDelay(80));
+        await tester.pump();
+
+        final speeds = tester
+            .widgetList<Text>(find.byType(Text))
+            .map((t) => t.data ?? '')
+            .where((t) => t.endsWith('/s'))
+            .toList();
+        expect(speeds, isNotEmpty);
+        for (final s in speeds) {
+          expect(s, isNot(contains('MB/s')), reason: s);
+          expect(s, isNot(contains('KB/s')), reason: s);
+        }
+        await shutDown(tester, env);
+      },
+    );
+
     testWidgets('finished connections are not listed', (tester) async {
       final env = await boot(tester);
       await add(tester, env, snap('a', DownloadStatus.downloading));

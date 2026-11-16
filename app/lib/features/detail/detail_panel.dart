@@ -95,6 +95,7 @@ class DetailPanel extends StatefulWidget {
 
 class _DetailPanelState extends State<DetailPanel> {
   final _speeds = ConnectionSpeeds();
+  ProgressEvent? _lastEvent;
   StreamSubscription<Map<String, ProgressEvent>>? _sub;
   String? _watching;
 
@@ -116,13 +117,19 @@ class _DetailPanelState extends State<DetailPanel> {
     if (_watching == widget.download.id && _sub != null) return;
     _sub?.cancel();
     _speeds.clear();
+    _lastEvent = null;
     _watching = widget.download.id;
     final live = context.read<LiveCubit>();
     final first = live.state[_watching];
     if (first != null) _speeds.update(first.segments, DateTime.now());
+    _lastEvent = first;
     _sub = live.stream.listen((all) {
       final e = all[_watching];
-      if (e == null || !mounted) return;
+      // The cubit speaks for every running download. An event that is not new
+      // for this one would be measured over a few microseconds and show an
+      // absurd speed, so only this download's own progress counts.
+      if (e == null || !mounted || identical(e, _lastEvent)) return;
+      _lastEvent = e;
       setState(() => _speeds.update(e.segments, DateTime.now()));
     });
   }
