@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Haul",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sends your browser's big downloads to the Haul app on this Mac.",
   "icons": {
     "16": "icons/icon16.png",
