@@ -1,0 +1,60 @@
+name: haul
+description: "Haul: a fast, segmented download manager."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_bloc: ^9.1.1
+  equatable: ^3.0.0
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  drift: ^2.35.4
+  sqlite3: ^3.9.1
+  download_engine:
+    path: ../packages/download_engine
+  flutter_secure_storage: ^11.2.0
+  macos_window_utils: ^1.9.1
+  window_manager: ^0.6.0
+  file_selector: ^1.1.0
+  desktop_drop: ^0.8.4
+  tray_manager: ^0.5.3
+  local_notifier: ^0.1.6
+  launch_at_startup: ^0.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.5
+  drift_dev: ^2.35.3
+  build_runner: ^2.16.1
+
+flutter:
+  # The app draws everything itself; no Material icon font is bundled.
+  uses-material-design: false
+  assets:
+    - assets/brand/in-app/
+    - assets/brand/menubar/
+    - assets/docs/
+  fonts:
+    # Variable font: one file serves weights 500 and 700. Open Font License,
+    # see assets/fonts/OFL.txt. Never fetched at run time.
+    # Phosphor icons, regular weight, MIT licence (assets/fonts/PHOSPHOR-LICENSE.txt).
+    # The phosphor_flutter package does not compile on current Flutter, so only
+    # its font is kept.
+    - family: PhosphorRegular
+      fonts:
+        - asset: assets/fonts/Phosphor-Regular.ttf
+    - family: SpaceGrotesk
+      fonts:
+        - asset: assets/fonts/SpaceGrotesk-Variable.ttf
+          weight: 500
+        - asset: assets/fonts/SpaceGrotesk-Variable.ttf
+          weight: 700
