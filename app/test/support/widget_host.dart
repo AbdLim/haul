@@ -61,11 +61,13 @@ Future<TestGesture> mouse(WidgetTester tester) async {
 /// highlights follow the desktop rules there, and the system menus exist.
 void haulTest(
   String description,
-  Future<void> Function(WidgetTester tester) body,
-) {
+  Future<void> Function(WidgetTester tester) body, {
+  Object? skip,
+}) {
   testWidgets(
     description,
     body,
     variant: TargetPlatformVariant.only(TargetPlatform.macOS),
+    skip: skip == true || skip is String,
   );
 }

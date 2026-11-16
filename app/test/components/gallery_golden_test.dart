@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:haul/data/setting_keys.dart';
@@ -9,6 +11,12 @@ import '../support/widget_host.dart';
 /// font, so the text is blocks; the shapes, colours and spacing are what they
 /// guard. Regenerate with `flutter test --update-goldens` after an intended
 /// visual change, and look at the diff before committing it.
+///
+/// A picture is only the same on the same machine: the pixels differ a little
+/// between Macs and the machines CI runs on, so these run locally and are
+/// skipped when the `CI` variable is set (as GitHub Actions does).
+final _onCi = Platform.environment.containsKey('CI');
+
 void main() {
   for (final mode in [AppThemeMode.dark, AppThemeMode.light]) {
     haulTest('gallery in ${mode.name}', (tester) async {
@@ -30,7 +38,7 @@ void main() {
         find.byKey(const ValueKey('shot')),
         matchesGoldenFile('goldens/gallery_${mode.name}.png'),
       );
-    });
+    }, skip: _onCi);
   }
 
   haulTest('the whole gallery builds without errors', (tester) async {
