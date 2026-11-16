@@ -29,9 +29,6 @@ jobs:
     name: Build and publish
     runs-on: macos-latest
     timeout-minutes: 90
-    # Signing secrets live in this environment, where they can be held behind a
-    # required reviewer (Settings, Environments). It is created on first run.
-    environment: release
     permissions:
       contents: write # to create the release and upload files
     steps:
