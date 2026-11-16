@@ -51,10 +51,38 @@ jobs:
       - name: Check the extension packages build
         run: extension/build.sh package
 
-  # Real Chrome driving the real extension. Slower and occasionally flaky, so it
-  # reports but does not block a merge.
+  # Everything that does not need a Mac, on the cheaper Linux runners: the
+  # engine and the extension's tests. (On a private repository a macOS minute
+  # counts ten times against the free allowance; on a public one it is free.)
+  engine-and-extension:
+    name: Engine and extension (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.5"
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Engine
+        working-directory: packages/download_engine
+        run: |
+          dart pub get
+          dart analyze --fatal-infos
+          dart test
+      - name: Extension
+        working-directory: extension
+        run: npm test
+
+  # Real Chrome driving the real extension. Slow, so it runs only when asked
+  # (Actions, CI, Run workflow); it never blocks a merge.
   extension-e2e:
     name: Extension in Chrome
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-latest
     timeout-minutes: 15
     continue-on-error: true

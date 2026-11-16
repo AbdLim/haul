@@ -34,7 +34,7 @@
 
 ## Install
 
-1. Open `Haul-1.0.0.dmg` and drag **Haul** onto the **Applications** shortcut.
+1. Open the downloaded `Haul-<version>.dmg` and drag **Haul** onto the **Applications** shortcut.
 2. Open Haul from Applications. Releases that are not yet signed with an Apple
    Developer ID (the release notes say when that is the case) are blocked the
    first time: open **System Settings, Privacy & Security**, scroll to the
@@ -58,13 +58,13 @@ browser.
 
 ### 1. Install the extension
 
-- **Chrome:** (Edge and Brave load it the same way, but only Chrome has been tried) unzip `haul-chrome-1.0.0.zip` to a folder you
+- **Chrome:** (Edge and Brave load it the same way, but only Chrome has been tried) unzip `haul-chrome-<version>.zip` to a folder you
   will keep. Open `chrome://extensions`, switch on **Developer mode**, press
   **Load unpacked**, and choose that folder. (Once Haul is in the Chrome Web
   Store, install it from there instead.)
 - **Firefox:** open `about:debugging`, choose **This Firefox**, then **Load
   Temporary Add-on**, and pick `manifest.json` inside the unzipped
-  `haul-firefox-1.0.0.zip`. A temporary add-on goes away when Firefox quits;
+  `haul-firefox-<version>.zip`. A temporary add-on goes away when Firefox quits;
   once Haul is published on Firefox Add-ons, install it from there. Firefox also
   asks you to allow the add-on to access your data on all websites (the
   add-on's Permissions tab); it needs this to see where a download comes from.
@@ -78,7 +78,7 @@ can send downloads to Haul.
    token**.
 2. In the browser, open the extension's **Options** (right-click its icon, or
    press Options in its popup). Paste the token into **Pairing token**.
-3. Press **Test connection**. It should say *Connected to Haul 1.0.0.* Haul's
+3. Press **Test connection**. It should say *Connected to Haul*, with the version Haul's
    Settings then shows the status as Connected.
 
 You only do this once. If you ever change the **Port** in Haul's Settings,

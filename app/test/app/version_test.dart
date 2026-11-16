@@ -68,8 +68,8 @@ void main() {
       'Pairing token',
       'curl http://127.0.0.1:47821/v1/ping',
       'Haul did not answer',
-      'haul-chrome-$appVersion.zip',
-      'Haul-$appVersion.dmg',
+      'haul-chrome-<version>.zip',
+      'Haul-<version>.dmg',
     ]) {
       expect(readme, contains(text));
     }

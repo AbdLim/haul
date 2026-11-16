@@ -1,22 +1,27 @@
 name: Release
 
-# Push a tag like v1.0.0 to build and publish a release. It can also be run by
-# hand (Actions, Release, Run workflow) to rebuild an existing tag, for
-# example after adding the signing secrets.
+# Two ways to make a release:
+#
+#   1. Actions, Release, Run workflow (on master). Enter the version, such as
+#      1.0.1, or leave it empty to use the version in app/pubspec.yaml. The
+#      tests run first, then the DMG is built, and only then is the tag made
+#      and the release published, so a failing test never leaves a tag behind.
+#   2. Push a tag like v1.0.1. The same build runs for that tag (and an
+#      existing release for it is updated).
 on:
   push:
     tags: ["v*"]
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Existing tag to build, such as v1.0.0"
-        required: true
+      version:
+        description: "Version to release, such as 1.0.1 (empty: the version in app/pubspec.yaml)"
+        required: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  group: release-${{ github.event.inputs.version || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
@@ -29,12 +34,8 @@ jobs:
     environment: release
     permissions:
       contents: write # to create the release and upload files
-    env:
-      TAG: ${{ github.event.inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ env.TAG }}
 
       - uses: subosito/flutter-action@v2
         with:
@@ -46,14 +47,37 @@ jobs:
         with:
           node-version: "22"
 
-      - name: The tag must match the app's version
+      - name: Work out the version and check it
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
-          want="${TAG#v}"
           have=$(sed -n 's/^version:[[:space:]]*\([0-9][0-9.]*\).*/\1/p' app/pubspec.yaml | head -1)
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            if [ "$GITHUB_REF" != "refs/heads/master" ]; then
+              echo "Run this workflow on master, not $GITHUB_REF." >&2
+              exit 1
+            fi
+            want="${INPUT_VERSION:-$have}"
+            want="${want#v}"
+            TAG="v$want"
+            if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+              echo "$TAG already exists. Raise the version (scripts/bump_version.sh) and try again." >&2
+              exit 1
+            fi
+          else
+            TAG="$GITHUB_REF_NAME"
+            want="${TAG#v}"
+          fi
           if [ "$want" != "$have" ]; then
-            echo "Tag $TAG does not match app/pubspec.yaml version $have." >&2
+            echo "Version $want does not match app/pubspec.yaml ($have). Run scripts/bump_version.sh $want, commit, and try again." >&2
             exit 1
           fi
+          if ! grep -q "^## \[$want\]" .github/CHANGELOG.md; then
+            echo "::warning::.github/CHANGELOG.md has no section for $want, so the release notes will only have the automatic list."
+          fi
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "Releasing $TAG"
 
       - name: Analyze, test and build
         env:
@@ -153,8 +177,11 @@ jobs:
             gh release upload "$TAG" release/* --clobber
             gh release edit "$TAG" --notes-file release-notes.md
           else
+            # Creates the tag at this exact commit if it does not exist yet, and
+            # adds GitHub's own list of changes and contributors after our notes.
             gh release create "$TAG" release/* \
+              --target "$GITHUB_SHA" \
               --title "Haul ${TAG#v}" \
               --notes-file release-notes.md \
-              --verify-tag
+              --generate-notes
           fi
