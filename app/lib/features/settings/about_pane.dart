@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../app/components/components.dart';
 import '../../app/dependencies.dart';
+import '../../app/haul_mark.dart';
 import '../../app/theme/haul_theme.dart';
 import '../../app/version.dart';
 import '../../data/setting_keys.dart';
@@ -19,6 +20,33 @@ class AboutPane extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: HaulSpace.l),
+          child: Row(
+            children: [
+              const HaulMark(size: 56),
+              const SizedBox(width: HaulSpace.m),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Haul', style: theme.text.viewTitle),
+                    const SizedBox(height: 2),
+                    Text(
+                      'A fast, open-source download manager for the Mac.',
+                      style: theme.text.secondary,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Version $appVersion · Free software under the GNU GPL v3 or later',
+                      style: theme.text.caption,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
         SettingsSection(
           title: 'Haul',
           children: [

@@ -38,7 +38,10 @@ void main() {
         .readAsStringSync();
     expect(xcconfig, contains('PRODUCT_NAME = Haul'));
     expect(xcconfig, contains('PRODUCT_BUNDLE_IDENTIFIER = dev.haul.app'));
-    expect(xcconfig, contains('PRODUCT_COPYRIGHT = Copyright © 2026 Abdulalim Ladan'));
+    expect(
+      xcconfig,
+      contains('PRODUCT_COPYRIGHT = Copyright © 2026 Abdulalim Ladan'),
+    );
     final plist = File('macos/Runner/Info.plist').readAsStringSync();
     expect(plist, contains('<key>CFBundleDisplayName</key>'));
   });

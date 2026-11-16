@@ -1,9 +1,36 @@
-# Haul
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.png">
+    <img alt="Haul" src=".github/assets/banner-light.png" height="64">
+  </picture>
+</p>
 
-A download manager for the Mac. It splits big files into parts that download
-at the same time, resumes them after a dropped connection or a restart, keeps
-a queue, and can take over downloads from Chrome and Firefox. Version 1.0.0,
-macOS 12 or newer.
+<p align="center">
+  <strong>A fast, open-source download manager for the Mac.</strong><br>
+  Segmented downloads, pause and resume, and a Chrome and Firefox extension that hands your browser's big downloads to Haul.
+</p>
+
+<p align="center">
+  <img alt="Licence: GPL-3.0-or-later" src="https://img.shields.io/badge/licence-GPL--3.0--or--later-F25C05">
+  <img alt="Platform: macOS 12 and newer" src="https://img.shields.io/badge/macOS-12%2B-14171C">
+  <img alt="Built with Flutter" src="https://img.shields.io/badge/built%20with-Flutter-14171C">
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/screenshot-dark.png">
+    <img alt="Haul's download list: three active downloads with progress bars and a combined speed, a failed download with a Retry button, and finished downloads" src=".github/assets/screenshot-light.png" width="860">
+  </picture>
+</p>
+
+## Features
+
+- **Faster, sturdier downloads:** a file is split into up to 8 parts that download at once, and idle connections take over the slowest part so the end doesn't drag.
+- **Pause, resume, retry:** carry on from the exact byte, even after a restart or a dropped connection.
+- **A queue you control:** limit how many run at once, set a speed limit, and use a proxy or site logins.
+- **Takes over browser downloads:** the Chrome and Firefox extension sends big files to Haul and keeps your logins working.
+- **Lives in the menu bar:** close the window and downloads carry on; banners and sounds tell you when they finish.
+- **Native and small:** a Mac app with light and dark themes, no ads, no accounts, nothing sent anywhere.
 
 ## Install
 
