@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+# Read-only by default; a job asks for more only if it needs it.
+permissions:
+  contents: read
+
+# A new push to the same branch or pull request cancels the older run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # The job name is what branch protection requires: "CI / Test".
+  test:
+    name: Test
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.5"
+          channel: stable
+          cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Versions
+        run: |
+          flutter --version
+          dart --version
+          node --version
+          xcodebuild -version
+
+      # Analysis, the engine, app and extension tests, then a release build.
+      # (The launch check needs a screen session, which CI does not have.)
+      - name: Analyze, test and build
+        env:
+          HAUL_SKIP_LAUNCH: "1"
+        run: scripts/build_release.sh
+
+      - name: Check the extension packages build
+        run: extension/build.sh package
+
+  # Real Chrome driving the real extension. Slower and occasionally flaky, so it
+  # reports but does not block a merge.
+  extension-e2e:
+    name: Extension in Chrome
+    runs-on: macos-latest
+    timeout-minutes: 15
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run the extension end-to-end checks
+        working-directory: extension
+        run: |
+          node e2e/options.e2e.js
+          node e2e/intercept.e2e.js
+          node e2e/linkmenu.e2e.js
+          node e2e/package.e2e.js

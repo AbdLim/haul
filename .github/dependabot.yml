@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+  - package-ecosystem: pub
+    directory: /app
+    schedule:
+      interval: weekly
+    groups:
+      dart:
+        update-types: [minor, patch]
+  - package-ecosystem: pub
+    directory: /packages/download_engine
+    schedule:
+      interval: weekly
+    groups:
+      dart:
+        update-types: [minor, patch]

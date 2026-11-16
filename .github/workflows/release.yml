@@ -1,0 +1,160 @@
+name: Release
+
+# Push a tag like v1.0.0 to build and publish a release. It can also be run by
+# hand (Actions, Release, Run workflow) to rebuild an existing tag, for
+# example after adding the signing secrets.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to build, such as v1.0.0"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: macos-latest
+    timeout-minutes: 90
+    # Signing secrets live in this environment, where they can be held behind a
+    # required reviewer (Settings, Environments). It is created on first run.
+    environment: release
+    permissions:
+      contents: write # to create the release and upload files
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.5"
+          channel: stable
+          cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: The tag must match the app's version
+        run: |
+          want="${TAG#v}"
+          have=$(sed -n 's/^version:[[:space:]]*\([0-9][0-9.]*\).*/\1/p' app/pubspec.yaml | head -1)
+          if [ "$want" != "$have" ]; then
+            echo "Tag $TAG does not match app/pubspec.yaml version $have." >&2
+            exit 1
+          fi
+
+      - name: Analyze, test and build
+        env:
+          HAUL_SKIP_LAUNCH: "1"
+        run: scripts/build_release.sh
+
+      - name: Package the browser extensions
+        run: extension/build.sh package
+
+      # -- signing (only when the secrets exist) ---------------------------------
+      - name: Are signing secrets set?
+        id: signing
+        env:
+          CERT: ${{ secrets.MACOS_CERTIFICATE }}
+          NOTARY: ${{ secrets.NOTARY_PASSWORD }}
+        run: |
+          if [ -n "$CERT" ] && [ -n "$NOTARY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Signing secrets are not set, so this release is UNSIGNED. See the signing notes for maintainers."
+          fi
+
+      - name: Import the signing certificate
+        if: steps.signing.outputs.enabled == 'true'
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+        run: |
+          keychain="$RUNNER_TEMP/haul-build.keychain-db"
+          password=$(uuidgen)
+          security create-keychain -p "$password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$password" "$keychain"
+          echo "$MACOS_CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/certificate.p12"
+          security import "$RUNNER_TEMP/certificate.p12" -k "$keychain" \
+            -P "$MACOS_CERTIFICATE_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$password" "$keychain"
+          security list-keychains -d user -s "$keychain" login.keychain-db
+          rm -f "$RUNNER_TEMP/certificate.p12"
+
+      - name: Sign, notarize and make the DMG
+        if: steps.signing.outputs.enabled == 'true'
+        env:
+          HAUL_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+          HAUL_NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          HAUL_NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+          HAUL_NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
+        run: scripts/sign_notarize.sh
+
+      - name: Make an unsigned DMG
+        if: steps.signing.outputs.enabled != 'true'
+        env:
+          HAUL_UNSIGNED: "1"
+        run: scripts/sign_notarize.sh
+
+      # -- publish ---------------------------------------------------------------
+      - name: Collect the files
+        run: |
+          mkdir -p release
+          cp dist/*.dmg release/
+          cp extension/dist/*.zip release/
+          (cd release && shasum -a 256 * > SHA256SUMS.txt && cat SHA256SUMS.txt)
+
+      - name: Write the release notes
+        env:
+          SIGNED: ${{ steps.signing.outputs.enabled }}
+        run: |
+          version="${TAG#v}"
+          {
+            # The matching section of CHANGELOG.md, if there is one.
+            awk -v v="$version" '
+              $0 ~ "^## \\[" v "\\]" { on=1; next }
+              on && /^## \[/ { exit }
+              on { print }
+            ' .github/CHANGELOG.md
+            echo
+            echo "## Install"
+            echo
+            if [ "$SIGNED" = "true" ]; then
+              echo "Open the DMG and drag **Haul** to **Applications**. It is signed and notarized by Apple."
+            else
+              echo "**This build is not signed or notarized.** Open the DMG and drag **Haul** to **Applications**, then try to open it once. macOS will refuse; open **System Settings, Privacy & Security**, scroll down to the message about Haul, press **Open Anyway** and confirm (on macOS 14 and earlier, right-click Haul and choose **Open** instead). If macOS says the app is damaged, run \`xattr -dr com.apple.quarantine /Applications/Haul.app\` once in Terminal."
+            fi
+            echo
+            echo "For the browser extension, unzip \`haul-chrome-$version.zip\` or \`haul-firefox-$version.zip\` and follow the README's *Take over downloads from your browser* section."
+            echo
+            echo "Check a download with \`shasum -a 256 -c SHA256SUMS.txt\`."
+          } > release-notes.md
+          cat release-notes.md
+
+      - name: Create or update the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" release/* --clobber
+            gh release edit "$TAG" --notes-file release-notes.md
+          else
+            gh release create "$TAG" release/* \
+              --title "Haul ${TAG#v}" \
+              --notes-file release-notes.md \
+              --verify-tag
+          fi
