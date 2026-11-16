@@ -37,6 +37,10 @@ Choose which file types, how big, and which sites to leave alone in **Settings, 
 - **The token was not accepted.** Press **Copy token** in Haul again and paste it fresh.
 - **A download was not taken over.** Its file type or size may not be on the list, or the site may be excluded in Settings, File types.
 
+## Updates
+
+Once a day Haul checks GitHub for a newer version. When there is one, a banner appears above your downloads: press **What's new** to read the changes and see who contributed, **Download** to fetch the new DMG with Haul itself, or the cross to hide it for now. Open the DMG and drag Haul onto Applications to update. You can turn the daily check off, or check by hand, in **Settings, About**.
+
 ## Good to know
 
 - Some servers do not allow resuming. Haul warns you before you pause one, because it would start over.

@@ -19,6 +19,7 @@ import 'package:haul/services/network/proxy_tester.dart';
 import 'package:haul/services/network/system_proxy.dart';
 import 'package:haul/services/network/url_prober.dart';
 import 'package:haul/services/system/app_window.dart';
+import 'package:haul/services/updates/update_checker.dart';
 import 'package:haul/services/system/folder_picker.dart';
 import 'package:haul/services/system/login_item.dart';
 import 'package:haul/services/system/notifier.dart';
@@ -113,6 +114,21 @@ class FakeFolderPicker implements FolderPicker {
   Future<String?> pick({String? startIn}) async => next;
 }
 
+/// An update check whose answer the test chooses.
+class FakeUpdateSource implements UpdateSource {
+  UpdateInfo? answer;
+  UpdateCheckException? failure;
+  int calls = 0;
+
+  @override
+  Future<UpdateInfo?> checkForNewer() async {
+    calls++;
+    final f = failure;
+    if (f != null) throw f;
+    return answer;
+  }
+}
+
 /// Records what the app asked the system to do.
 class FakePlatform extends PlatformServices {
   FakePlatform();
@@ -120,6 +136,7 @@ class FakePlatform extends PlatformServices {
   final revealed = <String>[];
   final opened = <String>[];
   final trashed = <String>[];
+  final openedUrls = <String>[];
 
   @override
   Future<Directory> defaultDownloadDirectory() async =>
@@ -133,6 +150,8 @@ class FakePlatform extends PlatformServices {
   Future<void> openFile(String path) async => opened.add(path);
   @override
   Future<void> moveToTrash(String path) async => trashed.add(path);
+  @override
+  Future<void> openUrl(String url) async => openedUrls.add(url);
 }
 
 /// Everything the UI needs, in memory.
@@ -191,6 +210,7 @@ makeTestDeps({
     loginItem: FakeLoginItem(),
     sleepBlocker: FakeSleepBlocker(),
     intake: intake,
+    updateSource: FakeUpdateSource(),
     bridge: bridgePort == null
         ? null
         : BridgeController(

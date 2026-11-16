@@ -11,6 +11,7 @@ import '../../data/downloads_dao.dart';
 import '../sidebar/sidebar.dart';
 import 'download_row.dart';
 import 'empty_state.dart';
+import '../updates/update_banner.dart';
 import 'first_run_card.dart';
 import 'list_logic.dart';
 import 'row_action_runner.dart';
@@ -146,6 +147,7 @@ class _DownloadsListState extends State<DownloadsList> {
           onClear: () => context.read<ShellCubit>().clearSelection(),
           child: Column(
             children: [
+              const UpdateBanner(),
               const FirstRunCard(),
               Expanded(child: body),
             ],

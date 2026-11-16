@@ -80,7 +80,7 @@ void main() {
     test('every key has a unique name', () {
       final names = Keys.all.map((k) => k.name).toList();
       expect(names.toSet(), hasLength(names.length));
-      expect(names.length, 35);
+      expect(names.length, 37);
     });
   });
 

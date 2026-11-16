@@ -109,4 +109,51 @@ and the next.
     expect(shown, isNot(contains('```')));
     expect(tester.takeException(), isNull);
   });
+  links();
+}
+
+void links() {
+  group('links', () {
+    test(
+      'bare links and @names are recognised, as in GitHub release notes',
+      () {
+        final s = parseInline(
+          'Fix by @some-one in https://github.com/abdlim/haul/pull/7. Done',
+        );
+        expect(s.map((x) => x.text), [
+          'Fix by ',
+          '@some-one',
+          ' in ',
+          'https://github.com/abdlim/haul/pull/7',
+          '. Done',
+        ]);
+        expect(s[1].link, 'https://github.com/some-one');
+        expect(s[3].link, 'https://github.com/abdlim/haul/pull/7');
+      },
+    );
+
+    test('an email address is not a mention', () {
+      expect(
+        parseInline('write to a@b.com').every((s) => s.link == null),
+        isTrue,
+      );
+    });
+
+    testWidgets('a click on a link calls onLink; other schemes do not', (
+      tester,
+    ) async {
+      final opened = <String>[];
+      await pumpHaul(
+        tester,
+        HaulMarkdown(
+          'See [the page](https://example.com/x) or [bad](javascript:alert(1))',
+          onLink: opened.add,
+        ),
+        size: const Size(900, 200),
+      );
+      await tester.tapOnText(find.textRange.ofSubstring('the page'));
+      await tester.tapOnText(find.textRange.ofSubstring('bad'));
+      expect(opened, ['https://example.com/x']);
+    });
+  });
 }

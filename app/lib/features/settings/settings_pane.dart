@@ -72,6 +72,6 @@ enum SettingsPane {
       Keys.listDensity,
       Keys.showSpeedInMenuBar,
     ],
-    SettingsPane.about => const [],
+    SettingsPane.about => [Keys.checkForUpdates, Keys.skippedUpdate],
   };
 }

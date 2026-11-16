@@ -30,7 +30,7 @@
 - **A queue you control:** limit how many run at once, set a speed limit, and use a proxy or site logins.
 - **Takes over browser downloads:** the Chrome and Firefox extension sends big files to Haul and keeps your logins working.
 - **Lives in the menu bar:** close the window and downloads carry on; banners and sounds tell you when they finish.
-- **Native and small:** a Mac app with light and dark themes, no ads, no accounts, nothing sent anywhere.
+- **Native and small:** a Mac app with light and dark themes, no ads and no accounts. Apart from your downloads, the only thing it contacts is GitHub, once a day, to see whether a newer version exists (you can switch that off).
 
 ## Install
 

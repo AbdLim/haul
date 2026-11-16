@@ -26,6 +26,9 @@ abstract class PlatformServices {
   /// Moves [path] to the Trash (or Recycle Bin), so it can be got back.
   Future<void> moveToTrash(String path);
 
+  /// Opens a web link ([url] must be http or https) in the default browser.
+  Future<void> openUrl(String url);
+
   /// Resolves the implementation for the running OS.
   static PlatformServices get current {
     if (Platform.isMacOS) return const MacOSPlatformServices();

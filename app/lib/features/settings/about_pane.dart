@@ -10,6 +10,7 @@ import '../../app/theme/haul_theme.dart';
 import '../../app/version.dart';
 import '../../data/setting_keys.dart';
 import 'settings_widgets.dart';
+import 'updates_section.dart';
 
 class AboutPane extends StatelessWidget {
   const AboutPane({super.key});
@@ -78,6 +79,7 @@ class AboutPane extends StatelessWidget {
             ),
           ],
         ),
+        const UpdatesSection(),
         SettingsSection(
           title: 'Reset',
           children: [

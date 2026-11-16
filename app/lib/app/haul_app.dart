@@ -22,6 +22,8 @@ import 'cubits/downloads_cubit.dart';
 import 'cubits/setting_cubit.dart';
 import 'cubits/shell_cubit.dart';
 import 'cubits/theme_mode_cubit.dart';
+import 'cubits/update_cubit.dart';
+import '../services/updates/update_checker.dart';
 import 'cubits/throughput_cubit.dart';
 import 'dependencies.dart';
 import 'integration/system_integration.dart';
@@ -56,6 +58,10 @@ class _HaulAppState extends State<HaulApp> {
     Keys.listDensity,
   );
   late final BrowserStatusCubit _browser = BrowserStatusCubit();
+  late final UpdateCubit _updates = UpdateCubit(
+    source: widget.deps.updateSource ?? GitHubUpdateChecker(),
+    settings: widget.deps.settings,
+  );
   late final ThroughputCubit _throughput = ThroughputCubit(
     live: _live,
     downloads: _downloads,
@@ -82,6 +88,8 @@ class _HaulAppState extends State<HaulApp> {
     super.initState();
     widget.deps.bridge?.onAuthenticated = _browserSeen;
     _wireIntake();
+    // Only the real app looks for updates by itself.
+    if (widget.native) _updates.startAutomatic();
     if (widget.native) {
       _system = SystemIntegration(
         deps: widget.deps,
@@ -137,6 +145,7 @@ class _HaulAppState extends State<HaulApp> {
     _themeMode.close();
     _density.close();
     _browser.close();
+    _updates.close();
     _throughput.close();
     super.dispose();
   }
@@ -162,6 +171,7 @@ class _HaulAppState extends State<HaulApp> {
           BlocProvider.value(value: _themeMode),
           BlocProvider.value(value: _density),
           BlocProvider.value(value: _browser),
+          BlocProvider.value(value: _updates),
           BlocProvider.value(value: _throughput),
         ],
         child: WidgetsApp(

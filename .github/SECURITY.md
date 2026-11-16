@@ -35,6 +35,10 @@ These are the parts most worth testing:
   on the same Mac and are used only to fetch that one file.
 - **File handling:** a download that can write outside its folder, overwrite an
   existing file, or run something.
+- **The update check** (`app/lib/services/updates`). It makes one request a day
+  to the GitHub releases API and shows the release notes. It only ever offers a
+  download from this repository's own release downloads. Anything that makes it
+  fetch from elsewhere is in scope.
 - **The extension** (`extension/`): permissions it uses beyond what
   the extension's store description explains.
 - **Release integrity:** the signing and notarization scripts and the GitHub

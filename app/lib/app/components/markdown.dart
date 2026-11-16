@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
 import '../theme/haul_theme.dart';
@@ -153,7 +154,7 @@ class MdSpan {
   final bool italic;
   final bool code;
 
-  /// Where a link points. Shown, not followed.
+  /// Where a link points. Followed only when the widget is given `onLink`.
   final String? link;
 
   @override
@@ -163,7 +164,8 @@ class MdSpan {
 }
 
 final _inline = RegExp(
-  r'`([^`]+)`|\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)]+)\)|(?<![\w*])\*([^*\s][^*]*?)\*(?![\w*])',
+  r'`([^`]+)`|\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)]+)\)|(?<![\w*])\*([^*\s][^*]*?)\*(?![\w*])'
+  r'|(https?://[^\s<>)\]]+[^\s<>)\].,;:!?])|(?<![\w@])@([A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?)\b',
 );
 
 /// Splits one line of text into styled pieces.
@@ -189,8 +191,16 @@ List<MdSpan> parseInline(String text) {
       }
     } else if (m.group(3) != null) {
       out.add(MdSpan(m.group(3)!, link: m.group(4)));
-    } else {
+    } else if (m.group(5) != null) {
       out.add(MdSpan(m.group(5)!, italic: true));
+    } else if (m.group(6) != null) {
+      // A bare link, as GitHub's release notes have them.
+      out.add(MdSpan(m.group(6)!, link: m.group(6)));
+    } else {
+      // @name, a GitHub user.
+      out.add(
+        MdSpan('@${m.group(7)!}', link: 'https://github.com/${m.group(7)!}'),
+      );
     }
     at = m.end;
   }
@@ -198,14 +208,38 @@ List<MdSpan> parseInline(String text) {
   return out;
 }
 
-/// Renders Markdown [source].
-class HaulMarkdown extends StatelessWidget {
-  const HaulMarkdown(this.source, {super.key});
+/// Renders Markdown [source]. Links are shown in the accent colour; with
+/// [onLink] a click on one calls it (only `http` and `https` links do).
+class HaulMarkdown extends StatefulWidget {
+  const HaulMarkdown(this.source, {this.onLink, super.key});
 
   final String source;
+  final void Function(String url)? onLink;
+
+  @override
+  State<HaulMarkdown> createState() => _HaulMarkdownState();
+}
+
+class _HaulMarkdownState extends State<HaulMarkdown> {
+  // Each clickable span needs a recognizer, which must be disposed.
+  final _recognizers = <TapGestureRecognizer>[];
+
+  @override
+  void dispose() {
+    for (final r in _recognizers) {
+      r.dispose();
+    }
+    super.dispose();
+  }
+
+  String get source => widget.source;
 
   @override
   Widget build(BuildContext context) {
+    for (final r in _recognizers) {
+      r.dispose();
+    }
+    _recognizers.clear();
     final theme = HaulTheme.of(context);
     final blocks = parseMarkdown(source);
     return Column(
@@ -320,15 +354,33 @@ class HaulMarkdown extends StatelessWidget {
     );
   }
 
+  /// A tap handler for a link span, when links are followed.
+  TapGestureRecognizer? _recognizerFor(MdSpan s) {
+    final url = s.link;
+    final onLink = widget.onLink;
+    if (url == null || onLink == null) return null;
+    final uri = Uri.tryParse(url);
+    if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) {
+      return null;
+    }
+    final r = TapGestureRecognizer()..onTap = () => onLink(url);
+    _recognizers.add(r);
+    return r;
+  }
+
   static TextStyle _mono(TextStyle base) =>
       base.copyWith(fontFamily: 'Menlo', fontSize: 12);
 
-  static TextSpan _spans(HaulTheme theme, String text, TextStyle base) {
+  TextSpan _spans(HaulTheme theme, String text, TextStyle base) {
     return TextSpan(
       style: base,
       children: [
         for (final s in parseInline(text))
           TextSpan(
+            recognizer: _recognizerFor(s),
+            mouseCursor: s.link == null || widget.onLink == null
+                ? null
+                : SystemMouseCursors.click,
             text: s.text,
             style: TextStyle(
               fontWeight: s.bold ? FontWeight.w700 : null,

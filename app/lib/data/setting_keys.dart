@@ -140,6 +140,16 @@ abstract final class Keys {
     false,
   );
 
+  /// Look for a newer Haul on GitHub once a day.
+  static final checkForUpdates = SettingKey.boolean('checkForUpdates', true);
+
+  /// When the last check ran, in seconds since 1970. Not a preference, so it is
+  /// not in [all].
+  static final lastUpdateCheck = SettingKey.optionalInt('lastUpdateCheck');
+
+  /// A version the person chose to skip: its banner stays away.
+  static final skippedUpdate = SettingKey.optionalString('skippedUpdate');
+
   /// Every key, for "reset all settings" and for tests.
   static final List<SettingKey<Object?>> all = [
     defaultSaveDir, launchAtLogin, startHidden, resumeOnLaunch, keepAwake,
@@ -150,6 +160,7 @@ abstract final class Keys {
     speedLimitBytesPerSec, retryAttempts, stallTimeoutSeconds, proxyMode,
     proxyHost, proxyPort, proxyUsername, proxyBypass, notificationsEnabled,
     notifyOnComplete, notifyOnFailure, soundOnComplete, soundOnFailure,
-    soundOnQueueFinished, themeMode, listDensity, showSpeedInMenuBar, //
+    soundOnQueueFinished, themeMode, listDensity, showSpeedInMenuBar,
+    checkForUpdates, skippedUpdate, //
   ];
 }

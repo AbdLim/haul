@@ -19,3 +19,5 @@ First public release.
   with a "Download with Haul" link menu and lists that follow the app's
   Settings.
 - A user guide in Settings, About, Help.
+- Update notifications: once a day (optional) Haul checks GitHub for a newer
+  version and shows what's new, with a button that downloads the new DMG.

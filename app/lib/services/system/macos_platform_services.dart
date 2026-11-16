@@ -37,6 +37,13 @@ class MacOSPlatformServices extends PlatformServices {
   }
 
   @override
+  Future<void> openUrl(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) return;
+    await Process.run('open', [uri.toString()]);
+  }
+
+  @override
   Future<void> moveToTrash(String path) async {
     final entity =
         FileSystemEntity.typeSync(path) == FileSystemEntityType.directory

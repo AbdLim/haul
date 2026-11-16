@@ -18,6 +18,7 @@ import '../services/network/proxy_tester.dart';
 import '../services/network/system_proxy.dart';
 import '../services/network/url_prober.dart';
 import '../services/system/app_window.dart';
+import '../services/updates/update_checker.dart';
 import '../services/system/folder_picker.dart';
 import '../services/system/login_item.dart';
 import '../services/system/notifier.dart';
@@ -55,6 +56,7 @@ class AppDependencies {
     this.sleepBlocker,
     this.bridge,
     this.intake,
+    this.updateSource,
   });
 
   final HaulDatabase database;
@@ -84,6 +86,9 @@ class AppDependencies {
 
   /// What the bridge does with a download from the browser.
   final BrowserIntake? intake;
+
+  /// Where Haul learns about newer versions.
+  final UpdateSource? updateSource;
 
   /// The real thing: file database in the app support folder, the engine in
   /// its own isolate, and the Keychain.
@@ -164,6 +169,7 @@ class AppDependencies {
       sleepBlocker: SleepBlocker.current,
       bridge: bridge,
       intake: intake,
+      updateSource: GitHubUpdateChecker(),
     );
   }
 
