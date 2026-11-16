@@ -1,0 +1,8 @@
+# Every change needs the maintainer's review (branch protection enforces it).
+* @AbdLim
+
+# Extra care: anything that touches the local bridge, signing or releases.
+/app/lib/services/bridge/   @AbdLim
+/scripts/                   @AbdLim
+/.github/                   @AbdLim
+/extension/manifest.*.json  @AbdLim

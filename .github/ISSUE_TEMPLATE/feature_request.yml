@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest an improvement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Haul aims to stay small, fast and Mac-native. Describing the problem you
+        have helps more than describing a solution.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like Haul to do
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you do today instead
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contributing
+      options:
+        - label: I would be willing to work on this

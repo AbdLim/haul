@@ -1,0 +1,66 @@
+name: Bug report
+description: Something in Haul or its browser extension does not work
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please search existing issues first.
+        **Do not include links with private tokens, cookies or passwords.**
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: And what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Add a download ...
+        2. Press Pause ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Haul version
+      description: Settings, About.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac type
+      placeholder: "macOS 15.2, Apple silicon"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does it happen
+      options:
+        - Downloading (speed, resume, errors)
+        - Browser extension (Chrome)
+        - Browser extension (Firefox)
+        - Menu bar, window or Dock
+        - Notifications or sounds
+        - Settings
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: link
+    attributes:
+      label: The kind of server or link, if it matters
+      description: >
+        A public link that shows the problem is ideal. Otherwise say what kind of
+        site it is. Leave out anything private.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Screenshots, the message on the failed row, what the extension's Test connection said.
