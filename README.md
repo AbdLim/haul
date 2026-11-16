@@ -211,3 +211,4 @@ Copyright © 2026 Abdulalim Ladan. This program comes with no warranty. The
 open-source software and fonts Haul is built from are listed in
 [THIRD_PARTY.md](.github/THIRD_PARTY.md). Contributions are welcome: see
 [CONTRIBUTING.md](.github/CONTRIBUTING.md).
+
