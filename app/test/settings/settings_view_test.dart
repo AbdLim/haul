@@ -8,6 +8,7 @@ import 'package:haul/data/setting_keys.dart';
 import 'package:haul/features/downloads/download_row.dart';
 import 'package:haul/features/settings/settings_pane.dart';
 import 'package:haul/features/settings/settings_view.dart';
+import 'package:haul/features/settings/settings_widgets.dart';
 
 import '../support/app_harness.dart';
 import '../support/widget_host.dart';
@@ -19,6 +20,19 @@ Future<void> open(WidgetTester tester, {SettingsPane? pane}) async {
 }
 
 void main() {
+  haulTest('a short pane starts at the top, not in the middle', (tester) async {
+    final env = await boot(tester);
+    for (final pane in [SettingsPane.appearance, SettingsPane.siteLogins]) {
+      await open(tester, pane: pane);
+      await tester.pumpAndSettle();
+      // The window is 800 high; the first section title sits just under the
+      // pane's header, whatever the pane's length.
+      final first = find.byType(SettingsSection).first;
+      expect(tester.getTopLeft(first).dy, lessThan(160), reason: pane.name);
+    }
+    await shutDown(tester, env);
+  });
+
   haulTest('opens from the shell and Escape goes back', (tester) async {
     final env = await boot(tester);
     await open(tester);

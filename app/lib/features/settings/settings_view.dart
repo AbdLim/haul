@@ -65,6 +65,13 @@ class SettingsView extends StatelessWidget {
                     Expanded(
                       child: AnimatedSwitcher(
                         duration: Motion.of(context, Motion.viewSwitch),
+                        // The default centres the pane, so a short one floated
+                        // in the middle of the window. Keep it at the top.
+                        layoutBuilder: (current, previous) => Stack(
+                          alignment: Alignment.topCenter,
+                          fit: StackFit.expand,
+                          children: [...previous, ?current],
+                        ),
                         child: SingleChildScrollView(
                           key: ValueKey(pane),
                           padding: const EdgeInsets.fromLTRB(
