@@ -101,6 +101,10 @@ class _HaulProgressBarState extends State<HaulProgressBar>
                         curve: Curves.linear,
                         builder: (context, v, _) => SizedBox(
                           width: width * v,
+                          // The fill must have the bar's height itself: with the
+                          // sheen as its child it would otherwise shrink to
+                          // nothing.
+                          height: widget.height,
                           child: AnimatedContainer(
                             duration: Motion.of(context, Motion.complete),
                             curve: Motion.easeOut,

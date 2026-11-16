@@ -34,6 +34,18 @@ Color fillColor(WidgetTester tester) {
 }
 
 void main() {
+  haulTest('the fill is as tall as the bar, active or not', (tester) async {
+    for (final active in [false, true]) {
+      await pumpHaul(tester, bar(value: 0.4, active: active));
+      await tester.pump(const Duration(milliseconds: 400));
+      final fill = find.descendant(
+        of: find.byType(HaulProgressBar),
+        matching: find.byType(AnimatedContainer),
+      );
+      expect(tester.getSize(fill.first).height, 3, reason: 'active: $active');
+    }
+  });
+
   haulTest('the fill is the right share of the track', (tester) async {
     await pumpHaul(tester, bar(value: 0.4));
     await tester.pumpAndSettle();
