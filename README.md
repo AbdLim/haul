@@ -34,7 +34,7 @@
 
 ## Install
 
-1. Open the downloaded `Haul-<version>.dmg` and drag **Haul** onto the **Applications** shortcut.
+1. Download and open `Haul-<version>.dmg` (from [Releases](https://github.com/abdlim/haul/releases)) and drag **Haul** onto the **Applications** shortcut.
 2. Open Haul from Applications. Releases that are not yet signed with an Apple
    Developer ID (the release notes say when that is the case) are blocked the
    first time: open **System Settings, Privacy & Security**, scroll to the
