@@ -11,6 +11,13 @@ updates:
     directory: /app
     schedule:
       interval: weekly
+    ignore:
+      # 0.x packages: a minor bump can break the API, and newer releases need a
+      # newer Dart than the stable Flutter ships. Update these by hand.
+      - dependency-name: window_manager
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: tray_manager
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       dart:
         update-types: [minor, patch]
