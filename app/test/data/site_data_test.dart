@@ -76,7 +76,7 @@ void main() {
     });
 
     test(
-      'the password is in the Keychain and nowhere in the database',
+      'the password is in the secret store and nowhere in the database',
       () async {
         await logins.save('Files.Example.com', 'alice', 'S3cret-pw!');
 

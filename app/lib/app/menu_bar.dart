@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'commands.dart';
+import 'keyboard_shortcuts.dart';
 
 /// The native macOS menu bar: Haul, File, Edit, View, Window and Help, with
-/// the usual Command shortcuts.
+/// the usual Command shortcuts. Elsewhere, where there is no menu bar to hang
+/// them on, it is [HaulShortcuts] instead: the same commands under Control.
 class HaulMenuBar extends StatelessWidget {
   const HaulMenuBar({required this.commands, required this.child, super.key});
 
@@ -148,6 +150,11 @@ class HaulMenuBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Windows has no menu bar to hang the shortcuts on, so it gets the same
+    // commands as plain Control shortcuts.
+    if (defaultTargetPlatform != TargetPlatform.macOS) {
+      return HaulShortcuts(commands: commands, child: child);
+    }
     return PlatformMenuBar(
       menus: menus(commands, showGallery: kDebugMode),
       child: child,

@@ -3,9 +3,11 @@ import 'dart:ui';
 
 import 'package:macos_window_utils/macos_window_utils.dart';
 
+import 'windows_window_chrome.dart';
+
 /// Native window behaviour that Flutter cannot do by itself. Everything the
-/// UI needs from the window goes through this, so Windows and Linux can add
-/// their own implementation later.
+/// UI needs from the window goes through this, so Linux can add its own
+/// implementation later.
 abstract class WindowChrome {
   /// Hidden title bar, content under the traffic lights, minimum size. A size
   /// and position saved by the last run are kept ([hasSavedFrame]).
@@ -17,8 +19,13 @@ abstract class WindowChrome {
   /// Toggles zoom, as double-clicking a title bar does.
   Future<void> toggleZoom();
 
+  /// Whether the sidebar sits on the system's own blur, behind the window's
+  /// content. Only the Mac draws one.
+  bool get blursSidebar;
+
   static WindowChrome get current {
     if (Platform.isMacOS) return MacOSWindowChrome();
+    if (Platform.isWindows) return WindowsWindowChrome();
     throw UnsupportedError('No window chrome for ${Platform.operatingSystem}');
   }
 }
@@ -30,6 +37,9 @@ const minimumWindowSize = Size(960, 600);
 const initialWindowSize = Size(1180, 760);
 
 class MacOSWindowChrome implements WindowChrome {
+  @override
+  bool get blursSidebar => true;
+
   @override
   Future<void> setup({bool hasSavedFrame = false}) async {
     await WindowManipulator.initialize(enableWindowDelegate: true);
@@ -70,6 +80,9 @@ class MacOSWindowChrome implements WindowChrome {
 class NoWindowChrome implements WindowChrome {
   int zoomToggles = 0;
   Brightness? lastBrightness;
+
+  @override
+  bool get blursSidebar => false;
 
   @override
   Future<void> setup({bool hasSavedFrame = false}) async {}

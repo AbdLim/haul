@@ -91,7 +91,7 @@ class AppDependencies {
   final UpdateSource? updateSource;
 
   /// The real thing: file database in the app support folder, the engine in
-  /// its own isolate, and the Keychain.
+  /// its own isolate, and the platform's secret store.
   static Future<AppDependencies> start() async {
     final platform = PlatformServices.current;
     final chrome = WindowChrome.current;
@@ -104,7 +104,7 @@ class AppDependencies {
     );
     final settings = await SettingsRepository.open(database);
     await settings.ensureBridgeToken();
-    final secrets = KeychainSecretStore();
+    final secrets = SecureStorageSecretStore();
 
     final downloadsDir =
         settings.get(Keys.defaultSaveDir) ??
@@ -121,7 +121,7 @@ class AppDependencies {
     final sync = SettingsEngineSync(settings, downloads);
     final siteRules = SiteRulesRepository(database);
     final siteLogins = SiteLoginsRepository(database, secrets);
-    const systemProxy = ScutilSystemProxyResolver();
+    final systemProxy = SystemProxyResolver.current;
     final network = NetworkSync(
       settings: settings,
       secrets: secrets,
@@ -161,7 +161,7 @@ class AppDependencies {
       networkSync: network,
       proxyTester: EngineProxyTester(),
       systemProxy: systemProxy,
-      sounds: AfplaySoundPlayer(),
+      sounds: SoundPlayer.current,
       window: window,
       notifier: Notifier.current,
       tray: TrayHost.current,

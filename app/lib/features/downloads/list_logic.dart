@@ -42,7 +42,7 @@ class SelectionResult {
 /// Standard list selection:
 ///
 /// * a plain click selects just that row;
-/// * Command-click adds or removes that row;
+/// * Command-click (Control on Windows) adds or removes that row;
 /// * Shift-click selects everything from the anchor to that row, in the order
 ///   shown.
 SelectionResult clickRow({

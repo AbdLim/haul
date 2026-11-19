@@ -13,7 +13,12 @@ void main() {
   setUp(() => dir = Directory.systemTemp.createTempSync('isohost_'));
   tearDown(() async {
     await server.close();
-    dir.deleteSync(recursive: true);
+    try {
+      dir.deleteSync(recursive: true);
+    } on FileSystemException {
+      // Windows keeps a killed isolate's files open until the process exits.
+      if (!Platform.isWindows) rethrow;
+    }
   });
 
   DownloadRequest req(String id) => DownloadRequest(

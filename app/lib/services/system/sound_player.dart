@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+import 'windows_sound_player.dart';
+
 /// Plays short sounds for events (a download finished, one failed).
 abstract class SoundPlayer {
   /// The names that can be chosen, such as `Glass`, in a stable order.
@@ -11,6 +13,12 @@ abstract class SoundPlayer {
   /// Plays [name]. A sound that is already playing is never talked over: the
   /// new one is dropped and false is returned.
   Future<bool> play(String name);
+
+  static SoundPlayer get current {
+    if (Platform.isMacOS) return AfplaySoundPlayer();
+    if (Platform.isWindows) return WindowsSoundPlayer();
+    throw UnsupportedError('No sound player for ${Platform.operatingSystem}');
+  }
 }
 
 /// Plays the Mac's own alert sounds by running `afplay` on a file in
