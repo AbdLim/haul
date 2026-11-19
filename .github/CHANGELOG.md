@@ -6,6 +6,12 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- A Windows app: the same downloads with a tray icon, banners, sounds, launch
+  at login, the Recycle Bin, File Explorer and Windows' own proxy settings.
+  Closing the window leaves Haul in the notification area, and the menu bar
+  commands are available under Control.
+
 ## [1.0.1] - 2026-11-16
 
 ## [1.0.0] - 2026-11-16

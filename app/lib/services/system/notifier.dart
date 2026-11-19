@@ -14,7 +14,7 @@ abstract class Notifier {
   });
 
   static Notifier get current {
-    if (Platform.isMacOS) return LocalNotifierService();
+    if (Platform.isMacOS || Platform.isWindows) return LocalNotifierService();
     throw UnsupportedError('No notifications for ${Platform.operatingSystem}');
   }
 }

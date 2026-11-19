@@ -8,6 +8,7 @@ import 'package:haul/app/error_text.dart';
 import 'package:haul/data/setting_keys.dart';
 import 'package:haul/features/downloads/empty_state.dart';
 import 'package:haul/features/downloads/first_run_card.dart';
+import 'package:haul/app/platform_names.dart';
 
 import '../support/app_harness.dart';
 import '../support/widget_host.dart';
@@ -24,7 +25,10 @@ void main() {
       final env = await boot(tester);
       expect(find.byType(DownloadsEmptyState), findsOneWidget);
       expect(
-        find.text('Paste a link or press ⌘N to add a download'),
+        find.text(
+          'Paste a link or press ${PlatformNames.commandSymbol}N to add a '
+          'download',
+        ),
         findsOneWidget,
       );
       await tester.tap(

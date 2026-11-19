@@ -1,10 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'menu.dart';
 
-/// Opens a menu where the user right-clicks (or Control-clicks) its child.
+/// Opens a menu where the user right-clicks (or, on the Mac, Control-clicks)
+/// its child.
 ///
 /// [entriesBuilder] runs at that moment, so the menu can reflect the current
 /// state, such as which downloads are selected.
@@ -36,7 +38,10 @@ class HaulContextMenuRegion extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onPointerDown: (e) {
         final secondary = e.buttons == kSecondaryMouseButton;
+        // Control-click is the Mac's second way to open a menu. Windows uses
+        // Control-click to add to a selection, so it does not open one there.
         final controlClick =
+            defaultTargetPlatform == TargetPlatform.macOS &&
             e.buttons == kPrimaryMouseButton &&
             HardwareKeyboard.instance.isControlPressed;
         if (secondary || controlClick) _open(context, e.position);

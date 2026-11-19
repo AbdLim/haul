@@ -51,6 +51,37 @@ jobs:
       - name: Check the extension packages build
         run: extension/build.sh package
 
+  # The same app on Windows: analysis, every test and a release build. GitHub's
+  # Windows runners come with Visual Studio and its C++ tools, which the
+  # sqlite3 native asset needs to build.
+  windows:
+    name: App (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.5"
+          channel: stable
+          cache: true
+
+      - name: Versions
+        run: flutter --version
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Build
+        run: flutter build windows --release
+
   # Everything that does not need a Mac, on the cheaper Linux runners: the
   # engine and the extension's tests. (On a private repository a macOS minute
   # counts ten times against the free allowance; on a public one it is free.)

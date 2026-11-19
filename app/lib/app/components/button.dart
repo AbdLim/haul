@@ -86,13 +86,20 @@ class HaulButton extends StatelessWidget {
                   HaulIcon(icon!, color: fg),
                   const SizedBox(width: 6),
                 ],
-                Text(
-                  label,
-                  style: theme.text.body.copyWith(
-                    color: fg,
-                    fontWeight: kind == HaulButtonKind.primary
-                        ? FontWeight.w600
-                        : FontWeight.w500,
+                // A label can be longer than the space a caller has, so it
+                // gives way rather than overflowing the button.
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.text.body.copyWith(
+                      color: fg,
+                      fontWeight: kind == HaulButtonKind.primary
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    ),
                   ),
                 ),
               ],

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'macos_platform_services.dart';
+import 'windows_platform_services.dart';
 
 /// Everything Haul needs from the host OS that Dart can't do portably.
 ///
@@ -32,7 +33,7 @@ abstract class PlatformServices {
   /// Resolves the implementation for the running OS.
   static PlatformServices get current {
     if (Platform.isMacOS) return const MacOSPlatformServices();
-    // Windows and Linux implementations land here later.
+    if (Platform.isWindows) return WindowsPlatformServices();
     throw UnsupportedError(
       'Haul does not support ${Platform.operatingSystem} yet.',
     );

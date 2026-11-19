@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../app/components/components.dart';
 import '../../app/cubits/browser_status_cubit.dart';
 import '../../app/dependencies.dart';
+import '../../app/platform_names.dart';
 import '../../app/theme/haul_theme.dart';
 import '../../data/setting_key.dart';
 import '../../data/setting_keys.dart';
@@ -53,7 +54,8 @@ class GeneralPane extends StatelessWidget {
           children: [
             SettingsRow(
               label: 'Open Haul at login',
-              help: 'Start Haul when you log in to your Mac.',
+              help:
+                  'Start Haul when you log in to your ${PlatformNames.computer}.',
               control: SettingToggle(
                 settingKey: _launchAtLogin,
                 label: 'Open Haul at login',
@@ -61,7 +63,9 @@ class GeneralPane extends StatelessWidget {
             ),
             SettingsRow(
               label: 'Start hidden',
-              help: 'Open with no window; Haul works from the menu bar.',
+              help:
+                  'Open with no window; Haul works from the '
+                  '${PlatformNames.trayArea}.',
               control: SettingToggle(
                 settingKey: _startHidden,
                 label: 'Start hidden',
@@ -76,11 +80,13 @@ class GeneralPane extends StatelessWidget {
               ),
             ),
             SettingsRow(
-              label: 'Keep Mac awake while downloading',
-              help: 'Stops your Mac sleeping until downloads finish.',
+              label: 'Keep ${PlatformNames.computer} awake while downloading',
+              help:
+                  'Stops your ${PlatformNames.computer} sleeping until '
+                  'downloads finish.',
               control: SettingToggle(
                 settingKey: _keepAwake,
-                label: 'Keep Mac awake while downloading',
+                label: 'Keep ${PlatformNames.computer} awake while downloading',
               ),
             ),
           ],

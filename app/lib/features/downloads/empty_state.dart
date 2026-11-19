@@ -6,6 +6,7 @@ import '../../app/cubits/downloads_cubit.dart';
 import '../../app/cubits/shell_cubit.dart';
 import '../../app/haul_mark.dart';
 import '../../app/motion/motion.dart';
+import '../../app/platform_names.dart';
 import '../../app/theme/haul_theme.dart';
 
 /// What the list shows when it has nothing to show. With no downloads at all
@@ -54,7 +55,8 @@ class DownloadsEmptyState extends StatelessWidget {
               const HaulMark(size: 56),
               const SizedBox(height: HaulSpace.m),
               Text(
-                'Paste a link or press ⌘N to add a download',
+                'Paste a link or press '
+                '${PlatformNames.commandSymbol}N to add a download',
                 style: theme.text.body,
               ),
               const SizedBox(height: HaulSpace.m),

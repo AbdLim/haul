@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:haul/app/components/components.dart';
+import 'package:haul/app/platform_names.dart';
 import 'package:haul/app/cubits/shell_cubit.dart';
 
 import '../support/app_harness.dart';
@@ -173,27 +174,28 @@ void main() {
       await shutDown(tester, env);
     });
 
-    testWidgets('Show in Finder reveals the folder of an unfinished download', (
-      tester,
-    ) async {
+    testWidgets('Show in ${PlatformNames.fileManager} reveals the folder of an '
+        'unfinished download', (tester) async {
       final env = await boot(tester);
       await add(tester, env, 'a', DownloadStatus.paused);
       await rightClick(tester, 'a');
-      await choose(tester, 'Show in Finder');
+      await choose(tester, 'Show in ${PlatformNames.fileManager}');
       expect(platform(env).revealed, ['/downloads']);
       await shutDown(tester, env);
     });
 
-    testWidgets('Show in Finder reveals the file itself once it is complete', (
-      tester,
-    ) async {
-      final env = await boot(tester);
-      await add(tester, env, 'a', DownloadStatus.completed, done: 100 * mib);
-      await rightClick(tester, 'a');
-      await choose(tester, 'Show in Finder');
-      expect(platform(env).revealed, ['/downloads/a.zip']);
-      await shutDown(tester, env);
-    });
+    testWidgets(
+      'Show in ${PlatformNames.fileManager} reveals the file itself once it '
+      'is complete',
+      (tester) async {
+        final env = await boot(tester);
+        await add(tester, env, 'a', DownloadStatus.completed, done: 100 * mib);
+        await rightClick(tester, 'a');
+        await choose(tester, 'Show in ${PlatformNames.fileManager}');
+        expect(platform(env).revealed, ['/downloads/a.zip']);
+        await shutDown(tester, env);
+      },
+    );
 
     testWidgets('Open opens a completed file', (tester) async {
       final env = await boot(tester);
@@ -335,22 +337,24 @@ void main() {
       await shutDown(tester, env);
     });
 
-    testWidgets('Delete file asks, then moves it to the Trash and removes it', (
-      tester,
-    ) async {
-      final env = await boot(tester);
-      await add(tester, env, 'a', DownloadStatus.completed, done: 100 * mib);
-      env.engine.commands.clear();
-      await rightClick(tester, 'a');
-      await choose(tester, 'Delete file…');
-      expect(find.text('Delete file?'), findsOneWidget);
-      expect(platform(env).trashed, isEmpty, reason: 'not before confirming');
+    testWidgets(
+      'Delete file asks, then moves it to the ${PlatformNames.trash} and '
+      'removes it',
+      (tester) async {
+        final env = await boot(tester);
+        await add(tester, env, 'a', DownloadStatus.completed, done: 100 * mib);
+        env.engine.commands.clear();
+        await rightClick(tester, 'a');
+        await choose(tester, 'Delete file…');
+        expect(find.text('Delete file?'), findsOneWidget);
+        expect(platform(env).trashed, isEmpty, reason: 'not before confirming');
 
-      await confirmWith(tester, 'Move to Trash');
-      expect(platform(env).trashed, ['/downloads/a.zip']);
-      expect(env.engine.commands.whereType<RemoveCommand>().single.id, 'a');
-      await shutDown(tester, env);
-    });
+        await confirmWith(tester, 'Move to ${PlatformNames.trash}');
+        expect(platform(env).trashed, ['/downloads/a.zip']);
+        expect(env.engine.commands.whereType<RemoveCommand>().single.id, 'a');
+        await shutDown(tester, env);
+      },
+    );
 
     testWidgets('declining Delete file leaves everything alone', (
       tester,

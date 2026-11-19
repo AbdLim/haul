@@ -2,6 +2,7 @@ import 'package:download_engine/download_engine.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../app/components/components.dart';
+import '../../app/platform_names.dart';
 import '../../data/downloads_dao.dart';
 
 /// Everything that can be done to a download from its menu.
@@ -86,7 +87,7 @@ String rowActionLabel(RowAction a) => switch (a) {
   RowAction.resume => 'Resume',
   RowAction.retry => 'Retry',
   RowAction.refreshLink => 'Refresh link…',
-  RowAction.showInFinder => 'Show in Finder',
+  RowAction.showInFinder => 'Show in ${PlatformNames.fileManager}',
   RowAction.open => 'Open',
   RowAction.copyUrl => 'Copy URL',
   RowAction.cancel => 'Cancel download…',

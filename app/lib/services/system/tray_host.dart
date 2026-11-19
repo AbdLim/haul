@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:tray_manager/tray_manager.dart';
 
 /// One line of the menu bar menu.
@@ -40,7 +43,7 @@ abstract class TrayHost {
   Future<void> dispose();
 
   static TrayHost get current {
-    if (Platform.isMacOS) return TrayManagerHost();
+    if (Platform.isMacOS || Platform.isWindows) return TrayManagerHost();
     throw UnsupportedError('No tray for ${Platform.operatingSystem}');
   }
 }
@@ -54,16 +57,27 @@ class TrayManagerHost with TrayListener implements TrayHost {
   @override
   Future<void> show() async {
     trayManager.addListener(this);
-    // A template image: macOS tints it for light and dark menu bars.
-    await trayManager.setIcon(
-      'assets/brand/menubar/haulMenubarTemplate@2x.png',
-      isTemplate: true,
-    );
+    if (Platform.isMacOS) {
+      // A template image: macOS tints it for light and dark menu bars.
+      await trayManager.setIcon(
+        'assets/brand/menubar/haulMenubarTemplate@2x.png',
+        isTemplate: true,
+      );
+    } else {
+      await trayManager.setIcon(await _iconFile());
+      await trayManager.setToolTip('Haul');
+    }
   }
 
   @override
   Future<void> update({required List<TrayEntry> entries, String? title}) async {
-    await trayManager.setTitle(title ?? '');
+    if (Platform.isMacOS) {
+      await trayManager.setTitle(title ?? '');
+    } else {
+      // The notification area has no room for text, so the speed goes in the
+      // tooltip, where the pointer finds it.
+      await trayManager.setToolTip(title == null ? 'Haul' : 'Haul - $title');
+    }
     await trayManager.setContextMenu(
       Menu(
         items: [
@@ -89,6 +103,21 @@ class TrayManagerHost with TrayListener implements TrayHost {
     await trayManager.destroy();
     await _selected.close();
   }
+}
+
+/// The notification area takes a file on disk, not Flutter's asset bundle, so
+/// the bundled icon is written out once and that copy is used from then on.
+Future<String> _iconFile() async {
+  final support = await getApplicationSupportDirectory();
+  final file = File(p.join(support.path, 'tray.ico'));
+  if (!file.existsSync()) {
+    final data = await rootBundle.load('assets/brand/windows/haulTray.ico');
+    await file.parent.create(recursive: true);
+    await file.writeAsBytes(
+      data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+    );
+  }
+  return file.path;
 }
 
 class FakeTrayHost implements TrayHost {
