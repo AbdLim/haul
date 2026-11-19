@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 
+import 'windows_app_window.dart';
+
 /// Showing, hiding and quitting, as the menu bar icon, the Dock and the quit
 /// shortcut need them. Native code does the work; this is the Dart face of it,
 /// so Windows and Linux can add their own later.
@@ -30,6 +32,7 @@ abstract class AppWindow {
 
   static AppWindow get current {
     if (Platform.isMacOS) return MacOSAppWindow();
+    if (Platform.isWindows) return WindowsAppWindow();
     throw UnsupportedError('No window for ${Platform.operatingSystem}');
   }
 }

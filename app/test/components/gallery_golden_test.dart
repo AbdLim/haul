@@ -14,8 +14,13 @@ import '../support/widget_host.dart';
 ///
 /// A picture is only the same on the same machine: the pixels differ a little
 /// between Macs and the machines CI runs on, so these run locally and are
-/// skipped when the `CI` variable is set (as GitHub Actions does).
-final _onCi = Platform.environment.containsKey('CI');
+/// skipped when the `CI` variable is set (as GitHub Actions does). For the
+/// same reason they only run where the pictures were drawn, which is a Mac.
+final _skipGoldens = Platform.environment.containsKey('CI')
+    ? 'pictures are compared on the machine that drew them'
+    : !Platform.isMacOS
+    ? 'the pictures were drawn on a Mac'
+    : null;
 
 void main() {
   for (final mode in [AppThemeMode.dark, AppThemeMode.light]) {
@@ -38,7 +43,7 @@ void main() {
         find.byKey(const ValueKey('shot')),
         matchesGoldenFile('goldens/gallery_${mode.name}.png'),
       );
-    }, skip: _onCi);
+    }, skip: _skipGoldens);
   }
 
   haulTest('the whole gallery builds without errors', (tester) async {

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:haul/app/components/components.dart';
+import 'package:haul/app/platform_names.dart';
 import 'package:haul/app/cubits/shell_cubit.dart';
 import 'package:haul/features/detail/detail_panel.dart';
 import 'package:haul/features/detail/segment_map.dart';
@@ -526,7 +527,7 @@ void main() {
       await tester.tap(find.text('a.zip'));
       await settle(tester);
       expect(button('Resume'), findsOneWidget);
-      expect(button('Show in Finder'), findsOneWidget);
+      expect(button('Show in ${PlatformNames.fileManager}'), findsOneWidget);
       expect(button('Copy URL'), findsOneWidget);
       expect(button('Pause'), findsNothing);
       expect(button('Open'), findsNothing);

@@ -13,14 +13,16 @@ const proxyPasswordKey = 'haul.proxy';
 /// Key under which the login for [host] is kept.
 String siteLoginKey(String host) => 'haul.login.${host.toLowerCase()}';
 
-/// The macOS Keychain.
+/// The platform's own secret store: the macOS Keychain, or the encrypted
+/// per-user storage Windows provides.
 ///
-/// Haul is distributed as a DMG without a provisioning profile, so it uses
-/// the legacy (file-based) keychain; the data-protection keychain would need
-/// the `keychain-access-groups` entitlement and a profile. This is the
-/// option `flutter_secure_storage` documents for that situation.
-class KeychainSecretStore implements SecretStore {
-  KeychainSecretStore([FlutterSecureStorage? storage])
+/// On macOS, Haul is distributed as a DMG without a provisioning profile, so
+/// it uses the legacy (file-based) keychain; the data-protection keychain
+/// would need the `keychain-access-groups` entitlement and a profile. This is
+/// the option `flutter_secure_storage` documents for that situation. Windows
+/// ignores that option and encrypts with the user's own login.
+class SecureStorageSecretStore implements SecretStore {
+  SecureStorageSecretStore([FlutterSecureStorage? storage])
     : _storage =
           storage ??
           const FlutterSecureStorage(

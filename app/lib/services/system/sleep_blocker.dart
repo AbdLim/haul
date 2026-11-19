@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-/// Stops the Mac sleeping (idle) while downloads run.
+import 'windows_sleep_blocker.dart';
+
+/// Stops the computer sleeping (idle) while downloads run.
 abstract class SleepBlocker {
-  /// Starts holding the Mac awake. Calling it again does nothing.
+  /// Starts holding the computer awake. Calling it again does nothing.
   Future<void> hold();
 
   /// Lets go. Calling it with nothing held does nothing.
@@ -13,6 +15,7 @@ abstract class SleepBlocker {
 
   static SleepBlocker get current {
     if (Platform.isMacOS) return CaffeinateSleepBlocker();
+    if (Platform.isWindows) return WindowsSleepBlocker();
     throw UnsupportedError('No sleep blocker for ${Platform.operatingSystem}');
   }
 }

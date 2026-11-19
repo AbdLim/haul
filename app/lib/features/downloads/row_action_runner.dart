@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../app/components/components.dart';
 import '../../app/cubits/downloads_cubit.dart';
 import '../../app/dependencies.dart';
+import '../../app/platform_names.dart';
 import '../../data/downloads_dao.dart';
 import 'refresh_link_dialog.dart';
 import 'row_actions.dart';
@@ -95,8 +96,8 @@ Future<void> runRowAction(
         context,
         title: 'Delete ${_count(targets.length, 'file')}?',
         message:
-            '${targets.length == 1 ? 'The file is' : 'The files are'} moved to the Trash and removed from the list.',
-        confirmLabel: 'Move to Trash',
+            '${targets.length == 1 ? 'The file is' : 'The files are'} moved to the ${PlatformNames.trash} and removed from the list.',
+        confirmLabel: 'Move to ${PlatformNames.trash}',
         cancelLabel: 'Keep',
       );
       if (!ok) return;

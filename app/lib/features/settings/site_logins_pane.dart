@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../app/components/components.dart';
 import '../../app/dependencies.dart';
+import '../../app/platform_names.dart';
 import '../../app/theme/haul_theme.dart';
 import '../../data/site_logins_repository.dart';
 import '../../data/site_rules_repository.dart';
@@ -30,8 +31,8 @@ class SiteLoginsPane extends StatelessWidget {
                     padding: const EdgeInsets.all(HaulSpace.m),
                     child: Text(
                       'No logins. When a site asks for one, add it here and '
-                      'retry the download. Passwords are kept in your '
-                      'Keychain and are never shown.',
+                      'retry the download. Passwords are kept in '
+                      '${PlatformNames.credentialStore} and are never shown.',
                       style: theme.text.caption,
                     ),
                   ),
@@ -79,7 +80,7 @@ class SiteLoginsPane extends StatelessWidget {
       title: 'Delete this login?',
       message:
           'Haul will stop signing in to ${l.host}. '
-          'Its saved password is removed from your Keychain.',
+          'Its saved password is removed from ${PlatformNames.credentialStore}.',
       confirmLabel: 'Delete',
       cancelLabel: 'Keep',
     );

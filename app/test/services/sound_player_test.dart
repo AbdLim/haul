@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:haul/services/system/sound_player.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
   late Directory dir;
@@ -32,7 +33,7 @@ void main() {
       run: (f) async => played.add(f),
     );
     expect(await p.play('Glass'), isTrue);
-    expect(played, ['${dir.path}/Glass.aiff']);
+    expect(played, [path.join(dir.path, 'Glass.aiff')]);
   });
 
   test('a second sound while one plays is dropped, not queued', () async {
@@ -49,7 +50,7 @@ void main() {
     expect(await p.play('Hero'), isFalse);
     gate.complete();
     expect(await first, isTrue);
-    expect(played, ['${dir.path}/Glass.aiff']);
+    expect(played, [path.join(dir.path, 'Glass.aiff')]);
     // Once it has finished, the next one plays.
     expect(await p.play('Hero'), isTrue);
   });

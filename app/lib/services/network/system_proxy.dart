@@ -2,12 +2,20 @@ import 'dart:io';
 
 import 'package:download_engine/download_engine.dart';
 
-/// Reads the Mac's own proxy setting, which is what "use the system proxy"
+import 'windows_system_proxy.dart';
+
+/// Reads the system's own proxy setting, which is what "use the system proxy"
 /// means. The engine only takes a manual proxy, so the app resolves the
 /// system one and sends the result.
 abstract class SystemProxyResolver {
   /// Null when the system uses no HTTP proxy.
   Future<ProxyConfig?> resolve();
+
+  static SystemProxyResolver get current {
+    if (Platform.isMacOS) return const ScutilSystemProxyResolver();
+    if (Platform.isWindows) return const RegistrySystemProxyResolver();
+    throw UnsupportedError('No proxy setting for ${Platform.operatingSystem}');
+  }
 }
 
 /// Asks `scutil --proxy`, which prints the active network's proxy settings.

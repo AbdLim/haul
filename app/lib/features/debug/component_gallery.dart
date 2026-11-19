@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../app/components/components.dart';
+import '../../app/platform_names.dart';
 import '../../app/theme/haul_theme.dart';
 import '../../data/setting_keys.dart';
 
@@ -257,14 +258,14 @@ class _GalleryPanelState extends State<GalleryPanel> {
                     HaulContextMenuRegion(
                       entriesBuilder: (_) => [
                         HaulMenuItem(
-                          label: 'Show in Finder',
+                          label: 'Show in ${PlatformNames.fileManager}',
                           icon: HaulIcons.folder,
                           onSelected: () {},
                         ),
                         HaulMenuItem(
                           label: 'Copy URL',
                           icon: HaulIcons.copy,
-                          shortcut: '⌘C',
+                          shortcut: '${PlatformNames.commandSymbol}C',
                           onSelected: () {},
                         ),
                         const HaulMenuDivider(),

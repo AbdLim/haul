@@ -6,13 +6,14 @@
 </p>
 
 <p align="center">
-  <strong>A fast, open-source download manager for the Mac.</strong><br>
+  <strong>A fast, open-source download manager for macOS and Windows.</strong><br>
   Segmented downloads, pause and resume, and a Chrome and Firefox extension that hands your browser's big downloads to Haul.
 </p>
 
 <p align="center">
   <img alt="Licence: GPL-3.0-or-later" src="https://img.shields.io/badge/licence-GPL--3.0--or--later-F25C05">
   <img alt="Platform: macOS 12 and newer" src="https://img.shields.io/badge/macOS-12%2B-14171C">
+  <img alt="Platform: Windows 10 and newer" src="https://img.shields.io/badge/Windows-10%2B-14171C">
   <img alt="Built with Flutter" src="https://img.shields.io/badge/built%20with-Flutter-14171C">
 </p>
 
@@ -29,10 +30,12 @@
 - **Pause, resume, retry:** carry on from the exact byte, even after a restart or a dropped connection.
 - **A queue you control:** limit how many run at once, set a speed limit, and use a proxy or site logins.
 - **Takes over browser downloads:** the Chrome and Firefox extension sends big files to Haul and keeps your logins working.
-- **Lives in the menu bar:** close the window and downloads carry on; banners and sounds tell you when they finish.
-- **Native and small:** a Mac app with light and dark themes, no ads and no accounts. Apart from your downloads, the only thing it contacts is GitHub, once a day, to see whether a newer version exists (you can switch that off).
+- **Lives in the menu bar, or the notification area on Windows:** close the window and downloads carry on; banners and sounds tell you when they finish.
+- **Native and small:** a Flutter app with light and dark themes, no ads and no accounts. Apart from your downloads, the only thing it contacts is GitHub, once a day, to see whether a newer version exists (you can switch that off).
 
 ## Install
+
+### macOS
 
 1. Download and open `Haul-<version>.dmg` (from [Releases](https://github.com/abdlim/haul/releases)) and drag **Haul** onto the **Applications** shortcut.
 2. Open Haul from Applications. Releases that are not yet signed with an Apple
@@ -49,6 +52,14 @@
 To add a download without a browser, press **Command-N** (or paste a link with
 Command-V, or drop a link on the window), check the file name and folder, and
 press Start.
+
+### Windows
+
+Windows builds are not in Releases yet. Build one from source (see
+[Building from source](#building-from-source)), then run
+`app\build\windows\x64\runner\Release\haul.exe`. On Windows the keys are
+**Control-N**, **Control-V** and **Control-comma**, and closing the window
+leaves Haul in the notification area, next to the clock.
 
 ## Take over downloads from your browser
 
@@ -71,11 +82,11 @@ browser.
 
 ### 2. Pair it with the app
 
-The extension and the app share a secret token, so no other program on your Mac
-can send downloads to Haul.
+The extension and the app share a secret token, so no other program on your
+computer can send downloads to Haul.
 
-1. In Haul, open **Settings** (Command-comma), **General**, and press **Copy
-   token**.
+1. In Haul, open **Settings** (Command-comma, or Control-comma on Windows),
+   **General**, and press **Copy token**.
 2. In the browser, open the extension's **Options** (right-click its icon, or
    press Options in its popup). Paste the token into **Pairing token**.
 3. Press **Test connection**. It should say *Connected to Haul*, with the version Haul's
@@ -106,20 +117,20 @@ a minute.
 
 ## Settings
 
-Open with **Command-comma**. Every change takes effect at once, and each pane
-has **Reset this pane**.
+Open with **Command-comma** (Control-comma on Windows). Every change takes
+effect at once, and each pane has **Reset this pane**.
 
 | Pane | What it does |
 | --- | --- |
-| General | Open at login, start hidden, resume downloads on launch, keep the Mac awake while downloading, the browser link (status, port, token), start browser downloads at once |
+| General | Open at login, start hidden, resume downloads on launch, keep the computer awake while downloading, the browser link (status, port, token), start browser downloads at once |
 | File types | The categories, their extensions and folders; which file types the browser extension takes over; sites it never takes over |
 | Save to | The default folder, a folder per category, and remembering the last folder you chose |
 | Downloads | How many run at once, what to do with a link already in the list, removing finished downloads |
 | Connection | Connections per download, a speed limit, retries, a stall timeout, per-site connection limits |
 | Proxy | None, the system proxy, or an HTTP proxy with a bypass list; **Test proxy** checks it |
-| Site logins | A user name and password for sites that ask (kept in the Keychain) |
+| Site logins | A user name and password for sites that ask (kept in secure storage) |
 | Notifications | Banners and sounds for finished, failed and all-done |
-| Appearance | System, light or dark; compact or comfortable rows; speed in the menu bar |
+| Appearance | System, light or dark; compact or comfortable rows; speed beside the tray icon |
 | About | The version, this README, licences, and Reset all settings |
 
 ## Known limits
@@ -144,7 +155,8 @@ has **Reset this pane**.
 
 Work down this list; stop when it works.
 
-1. **Is Haul running?** Look for its icon in the menu bar. Open Haul.
+1. **Is Haul running?** Look for its icon in the menu bar (the notification area
+   on Windows). Open Haul.
 2. **Is browser integration on?** Haul's Settings, General: **Take over
    downloads from browsers** must be on.
 3. **Is the port the same on both sides?** Haul's Settings, General shows the
@@ -154,7 +166,7 @@ Work down this list; stop when it works.
 4. **Press Test connection** in the extension's Options. *Haul did not accept
    this token* means the token is wrong or old: press **Copy token** in Haul
    again and paste it fresh.
-5. **Check from Terminal:** `curl http://127.0.0.1:47821/v1/ping` should print
+5. **Check from a terminal:** `curl http://127.0.0.1:47821/v1/ping` should print
    `{"app":"Haul",...}`. If it does not, something is blocking the port; try a
    different one.
 
@@ -175,26 +187,38 @@ under Settings, Site logins.
 ## Building from source
 
 ```
-scripts/build_release.sh            # analyze, test everything, build the app
+scripts/build_release.sh            # analyze, test everything, build the Mac app
 extension/build.sh package          # the two extension zips, in extension/dist
 HAUL_SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" \
 HAUL_NOTARY_PROFILE=haul-notary \
   scripts/sign_notarize.sh          # sign, notarize and make the DMG in dist/
 ```
 
+On Windows, with Visual Studio's **Desktop development with C++** workload
+installed, including the **C++ ATL for latest v143 build tools** component:
+
+```
+cd app
+flutter pub get
+flutter analyze
+flutter test
+flutter build windows --release    # app\build\windows\x64\runner\Release
+```
+
 The repository holds:
 
 ```
-app/                    The Flutter app (macOS), built on Cubits
+app/                    The Flutter app (macOS and Windows), built on Cubits
 packages/download_engine/   The download engine: pure Dart, no Flutter
 extension/              The Chrome and Firefox extension (plain JavaScript)
 scripts/                Release, signing and packaging scripts
 ```
 
-To add
-Windows or Linux later, implement the interfaces in `app/lib/services/system`
-(platform services, window, tray, notifier, login item, sleep blocker) and return
-them from each `current` getter; the engine and the screens need no change.
+The platform-specific parts (window, tray icon, notifications, login item,
+sleep blocker, sounds, proxy, Recycle Bin) live behind interfaces in
+`app/lib/services/system` and `app/lib/services/network`, with one
+implementation per OS. The engine and the screens need no change for a new
+one.
 
 ## Licence
 

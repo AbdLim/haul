@@ -11,6 +11,14 @@ import '../../../packages/download_engine/test_support/range_server.dart';
 
 const mib = 1024 * 1024;
 
+/// Windows keeps a killed isolate's files locked until the process exits, so
+/// the crashed engine's `.part` files can be neither deleted nor opened again
+/// by the recovering one. An in-process crash cannot be simulated there; the
+/// crash tests run where the operating system lets go of the files.
+final _skipCrash = Platform.isWindows
+    ? 'a killed isolate keeps its files locked on Windows'
+    : null;
+
 Future<void> settle([int ms = 40]) =>
     Future<void>.delayed(Duration(milliseconds: ms));
 
@@ -91,7 +99,7 @@ void main() {
     expect(d.snapshot.status, DownloadStatus.downloading);
     expect(d.snapshot.downloadedBytes, greaterThan(0));
     expect(d.snapshot.downloadedBytes, lessThan(12 * mib));
-  });
+  }, skip: _skipCrash);
 
   test(
     'after a crash, a new repository resumes it and the bytes are right',
@@ -119,6 +127,7 @@ void main() {
       expect(File('${dir.path}/a/file.bin').readAsBytesSync(), server.allBytes);
       expect(File('${dir.path}/a/file.bin.part').existsSync(), isFalse);
     },
+    skip: _skipCrash,
   );
 
   test(
@@ -153,6 +162,7 @@ void main() {
       await waitFor('a', (d) => d.snapshot.status == DownloadStatus.completed);
       expect(File('${dir.path}/a/file.bin').readAsBytesSync(), server.allBytes);
     },
+    skip: _skipCrash,
   );
 
   test(
@@ -181,6 +191,7 @@ void main() {
       expect(done.snapshot.downloadedBytes, 8 * mib);
       expect(File('${dir.path}/a/file.bin').readAsBytesSync(), server.allBytes);
     },
+    skip: _skipCrash,
   );
 
   test('finished, failed and paused downloads are not touched', () async {
@@ -265,6 +276,7 @@ void main() {
       }
       expect(started, ['a', 'b', 'c']);
     },
+    skip: _skipCrash,
   );
 
   test('an empty database recovers to nothing', () async {
