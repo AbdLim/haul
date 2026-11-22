@@ -7,21 +7,23 @@ welcome. By taking part you agree to follow the
 ## Before you start
 
 - **Bugs:** search the open issues first, then use the *Bug report* form. The
-  version, macOS version and what the row said help the most.
+  version, macOS or Windows version and what the row said help the most.
 - **Features:** open a *Feature request* and talk it over before writing a large
-  change. Haul aims to stay small, fast and Mac-native, so some ideas will not
+  change. Haul aims to stay small, fast and native, so some ideas will not
   fit.
 - **Security problems:** do not use issues. See [SECURITY.md](SECURITY.md).
 
 ## Setting up
 
-You need a Mac, [Flutter](https://docs.flutter.dev/get-started/install/macos)
-(the version in `.github/workflows/ci.yml`), Xcode, and Node 20 or newer for
-the extension's checks.
+You need Flutter (the version in `.github/workflows/ci.yml`) and Node 20 or
+newer for the extension's checks. For the Mac app you also need a Mac with
+Xcode; for the Windows app, a PC with Visual Studio's **Desktop development
+with C++** workload, including the **C++ ATL for latest v143 build tools**
+component that the secure storage plugin uses.
 
 ```
 git clone <your fork>
-cd haul/app && flutter pub get && flutter run -d macos
+cd haul/app && flutter pub get && flutter run -d macos   # or -d windows
 ```
 
 The repository is a small monorepo:
@@ -47,6 +49,13 @@ or the parts:
 (cd extension && npm test)               # and `npm run e2e` with Chrome installed
 ```
 
+On Windows (`scripts/build_release.sh` is a shell script), run the same steps
+from PowerShell:
+
+```
+cd app; flutter analyze; flutter test; flutter build windows --release
+```
+
 A pull request should keep analysis clean and every test passing. New behaviour
 needs a test; a bug fix needs a test that fails without the fix.
 
@@ -58,7 +67,8 @@ needs a test; a bug fix needs a test that fails without the fix.
 - **State lives in Cubits.** Widgets read state and call methods; they do not
   talk to the database or the engine directly.
 - **Everything platform-specific goes behind an interface** in
-  `app/lib/services/system`, so Windows and Linux can be added later.
+  `app/lib/services/system`, with one implementation per OS (macOS and Windows
+  today; Linux can be added the same way).
 - **Words for people.** Errors say what happened in plain language, never a
   code. Keep copy short and kind.
 - **Explain departures.** If you deviate from the obvious design, say why in

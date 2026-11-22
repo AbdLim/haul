@@ -55,7 +55,7 @@ class ShellPage extends StatelessWidget {
         children: [
           SizedBox(
             width: ShellMetrics.sidebarWidth,
-            child: native
+            child: native && chrome.blursSidebar
                 ? TransparentMacOSSidebar(child: sidebarBody)
                 : sidebarBody,
           ),

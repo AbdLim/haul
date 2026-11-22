@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../app/components/components.dart';
 import '../../app/dependencies.dart';
+import '../../app/platform_names.dart';
 import '../../data/setting_keys.dart';
 import 'general_pane.dart';
 import 'setting_builder.dart';
@@ -58,11 +59,11 @@ class AppearancePane extends StatelessWidget {
               ),
             ),
             SettingsRow(
-              label: 'Show speed in the menu bar',
+              label: 'Show speed in the ${PlatformNames.trayArea}',
               help: 'Total download speed next to the Haul icon.',
               control: SettingToggle(
                 settingKey: Keys.showSpeedInMenuBar,
-                label: 'Show speed in the menu bar',
+                label: 'Show speed in the ${PlatformNames.trayArea}',
               ),
             ),
           ],

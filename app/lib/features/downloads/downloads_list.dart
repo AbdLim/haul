@@ -54,7 +54,10 @@ class _DownloadsListState extends State<DownloadsList> {
       current: shell.state.selection,
       anchor: _anchor,
       clicked: id,
-      command: HardwareKeyboard.instance.isMetaPressed,
+      // Command on the Mac, Control on Windows: either adds to the selection.
+      command:
+          HardwareKeyboard.instance.isMetaPressed ||
+          HardwareKeyboard.instance.isControlPressed,
       shift: HardwareKeyboard.instance.isShiftPressed,
     );
     _anchor = result.anchor;

@@ -16,6 +16,10 @@ abstract class BridgeBackend {
 /// The largest body the bridge reads.
 const maxBridgeBody = 256 * 1024;
 
+/// How much of an over-limit body the bridge reads before it stops, so the
+/// caller can finish sending and read the answer.
+const maxBridgeRead = 2 * 1024 * 1024;
+
 /// A web server on this Mac's loopback address only, for the browser
 /// extension. Routes: GET /v1/ping, GET /v1/config and
 /// POST /v1/downloads.
@@ -115,13 +119,25 @@ class BridgeServer {
   }
 
   Future<void> _postDownload(HttpRequest request) async {
-    final declared = request.contentLength;
-    if (declared > maxBridgeBody) return _tooLarge(request);
+    // A body over the limit is read to its end anyway, so the caller can
+    // finish sending and hear the answer: closing while it is still writing
+    // resets the connection, and the caller then sees a network error. Far
+    // more than the limit is not worth waiting for.
     final bytes = <int>[];
+    var read = 0;
+    var tooLarge = request.contentLength > maxBridgeBody;
     await for (final chunk in request) {
-      bytes.addAll(chunk);
-      if (bytes.length > maxBridgeBody) return _tooLarge(request);
+      read += chunk.length;
+      if (!tooLarge) {
+        bytes.addAll(chunk);
+        if (bytes.length > maxBridgeBody) {
+          tooLarge = true;
+          bytes.clear();
+        }
+      }
+      if (read > maxBridgeRead) break;
     }
+    if (tooLarge) return _tooLarge(request);
     final Object? json;
     try {
       json = jsonDecode(utf8.decode(bytes));

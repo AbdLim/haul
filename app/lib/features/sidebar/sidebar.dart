@@ -6,6 +6,7 @@ import '../../app/cubits/browser_status_cubit.dart';
 import '../../app/cubits/downloads_cubit.dart';
 import '../../app/cubits/shell_cubit.dart';
 import '../../app/motion/motion.dart';
+import '../../app/platform_names.dart';
 import '../../app/theme/haul_theme.dart';
 import '../shell/sidebar_frame.dart';
 import 'sidebar_counts.dart';
@@ -246,7 +247,10 @@ class _SettingsButton extends StatelessWidget {
                   ),
                 ),
               ),
-              Text('⌘,', style: theme.text.caption),
+              Text(
+                '${PlatformNames.commandSymbol},',
+                style: theme.text.caption,
+              ),
             ],
           ),
         );

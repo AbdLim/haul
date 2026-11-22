@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:launch_at_startup/launch_at_startup.dart';
 
+import 'windows_login_item.dart';
+
 /// Starting the app when the person logs in.
 abstract class LoginItem {
   Future<bool> isEnabled();
@@ -9,6 +11,7 @@ abstract class LoginItem {
 
   static LoginItem get current {
     if (Platform.isMacOS) return LaunchAtStartupLoginItem();
+    if (Platform.isWindows) return WindowsLoginItem();
     throw UnsupportedError('No login item for ${Platform.operatingSystem}');
   }
 }

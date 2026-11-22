@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../app/components/components.dart';
 import '../../app/dependencies.dart';
+import '../../app/platform_names.dart';
 import '../../app/theme/haul_theme.dart';
 import '../../data/setting_keys.dart';
 import '../../services/network/proxy_tester.dart';
@@ -211,9 +212,9 @@ class _ManualProxyState extends State<_ManualProxy> {
         SettingsRow(
           label: 'Password',
           help: _hasPassword == true
-              ? 'A password is saved in your Keychain. Type to replace it, '
-                    'or clear the box and type nothing to keep it.'
-              : 'Saved in your Keychain, never shown.',
+              ? 'A password is saved in ${PlatformNames.credentialStore}. '
+                    'Type to replace it, or clear the box and type nothing to keep it.'
+              : 'Saved in ${PlatformNames.credentialStore}, never shown.',
           control: SizedBox(
             width: 260,
             child: HaulTextField(

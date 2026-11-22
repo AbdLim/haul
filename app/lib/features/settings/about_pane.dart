@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../app/components/components.dart';
 import '../../app/dependencies.dart';
 import '../../app/haul_mark.dart';
+import '../../app/platform_names.dart';
 import '../../app/theme/haul_theme.dart';
 import '../../app/version.dart';
 import '../../data/setting_keys.dart';
@@ -34,7 +35,8 @@ class AboutPane extends StatelessWidget {
                     Text('Haul', style: theme.text.viewTitle),
                     const SizedBox(height: 2),
                     Text(
-                      'A fast, open-source download manager for the Mac.',
+                      'A fast, open-source download manager for the '
+                      '${PlatformNames.computer}.',
                       style: theme.text.secondary,
                     ),
                     const SizedBox(height: 2),

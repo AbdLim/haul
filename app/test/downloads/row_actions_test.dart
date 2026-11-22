@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:download_engine/download_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:haul/app/components/components.dart';
+import 'package:haul/app/platform_names.dart';
 import 'package:haul/data/downloads_dao.dart';
 import 'package:haul/features/downloads/row_actions.dart';
 import 'package:haul/services/system/macos_platform_services.dart';
@@ -195,7 +196,7 @@ void main() {
       expect(labels(entries), [
         'Resume',
         '---',
-        'Show in Finder',
+        'Show in ${PlatformNames.fileManager}',
         'Copy URL',
         '---',
         'Cancel download…',
@@ -206,7 +207,7 @@ void main() {
     test('a completed download has Open and Delete file', () {
       final entries = buildRowMenu([dl('a', DownloadStatus.completed)], (_) {});
       expect(labels(entries), [
-        'Show in Finder',
+        'Show in ${PlatformNames.fileManager}',
         'Open',
         'Copy URL',
         '---',

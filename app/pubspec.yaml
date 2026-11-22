@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^9.1.1
   equatable: ^3.0.0
+  ffi: ^2.2.0
   path: ^1.9.1
   path_provider: ^2.1.6
   drift: ^2.35.4
@@ -41,6 +42,7 @@ flutter:
   assets:
     - assets/brand/in-app/
     - assets/brand/menubar/
+    - assets/brand/windows/
     - assets/docs/
   fonts:
     # Variable font: one file serves weights 500 and 700. Open Font License,
