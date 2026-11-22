@@ -79,4 +79,16 @@ void main() {
     fail = false;
     expect(await p.play('Glass'), isTrue);
   });
+
+  test('without a folder it uses the sounds in the system folder', () {
+    final p = WindowsSoundPlayer();
+    final root = Platform.environment['SystemRoot'];
+    expect(
+      p.directory,
+      path.join(
+        root == null || root.isEmpty ? r'C:\Windows' : root,
+        'Media',
+      ),
+    );
+  });
 }

@@ -28,6 +28,15 @@ void main() {
     expect(runner.last, [r'/select,C:\Users\me\movie.mp4']);
   });
 
+  test('a comma in the path stays part of it, after the switch', () async {
+    final runner = _Runner();
+    final platform = WindowsPlatformServices(run: runner.run);
+    await platform.revealInFileManager(r'C:\Users\me\Season 1, Disc 2\a.mp4');
+    expect(runner.calls.single.$1, 'explorer.exe');
+    // One argument: Explorer reads the switch only up to the first comma.
+    expect(runner.last, [r'/select,C:\Users\me\Season 1, Disc 2\a.mp4']);
+  });
+
   test('a file or link opens through the shell handler', () async {
     final runner = _Runner();
     final platform = WindowsPlatformServices(run: runner.run);

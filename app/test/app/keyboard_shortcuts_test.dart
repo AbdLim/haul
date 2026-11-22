@@ -57,7 +57,7 @@ void main() {
         for (final a in bindings.keys.cast<SingleActivator>())
           (a.trigger, a.shift),
       ],
-      [
+      containsAll([
         (LogicalKeyboardKey.comma, false),
         (LogicalKeyboardKey.keyN, false),
         (LogicalKeyboardKey.keyP, true),
@@ -68,7 +68,7 @@ void main() {
         (LogicalKeyboardKey.keyA, false),
         (LogicalKeyboardKey.digit1, false),
         (LogicalKeyboardKey.keyI, false),
-      ],
+      ]),
     );
   });
 

@@ -12,9 +12,10 @@ import 'sound_player.dart';
 /// system's own media folder.
 class WindowsSoundPlayer implements SoundPlayer {
   WindowsSoundPlayer({
-    this.directory = r'C:\Windows\Media',
+    String? directory,
     Future<void> Function(String file)? play,
-  }) : _play = play ?? playWav;
+  }) : directory = directory ?? systemMediaDirectory(),
+       _play = play ?? playWav;
 
   final String directory;
   final Future<void> Function(String file) _play;
@@ -48,6 +49,16 @@ class WindowsSoundPlayer implements SoundPlayer {
       _playing = false;
     }
   }
+}
+
+/// The folder of sounds Windows ships, wherever Windows itself is installed,
+/// as `%SystemRoot%\Media`.
+String systemMediaDirectory() {
+  final root = Platform.environment['SystemRoot'];
+  return p.join(
+    root == null || root.isEmpty ? r'C:\Windows' : root,
+    'Media',
+  );
 }
 
 /// Plays [file] and returns when it has finished.

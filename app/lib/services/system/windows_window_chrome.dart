@@ -19,13 +19,29 @@ class WindowsWindowChrome implements WindowChrome {
 
   @override
   Future<void> setup({bool hasSavedFrame = false}) async {
-    final window = _window;
+    // The runner creates the window before Dart starts and window_manager's
+    // native API has no initialise step of its own, so the window is normally
+    // here already. When the platform has not reported it yet, wait for it
+    // rather than let the size and the minimum quietly go unset.
+    final window = _window ?? await _windowWhenReady();
     if (window == null) return;
     window.minimumSize = minimumWindowSize.toNative();
     if (!hasSavedFrame) {
       window.setSize(initialWindowSize.toNative(), false);
       window.center();
     }
+  }
+
+  Future<Window?> _windowWhenReady() async {
+    for (var tries = 0; tries < _windowTries; tries++) {
+      await Future<void>.delayed(_windowPoll);
+      final window = WindowManager.instance.getCurrent();
+      if (window != null) {
+        _cached = window;
+        return window;
+      }
+    }
+    return null;
   }
 
   @override
@@ -42,3 +58,8 @@ class WindowsWindowChrome implements WindowChrome {
     }
   }
 }
+
+/// How long setup waits for the platform to report its window: a fifth of a
+/// second, which is far longer than the gap it covers.
+const _windowTries = 10;
+const _windowPoll = Duration(milliseconds: 20);
